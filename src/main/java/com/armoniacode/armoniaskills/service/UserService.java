@@ -19,16 +19,16 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String loginUser(User user) {
+    public User loginUser(User user) {
         User userFromDB = userRepository.findByEmail(user.getEmail());
         if (userFromDB != null) {
-            if (BCrypt.checkpw(user.getContrasenia(), userFromDB.getContrasenia())) {
-                return "Login exitoso";
+            if (BCrypt.checkpw(user.getPassword(), userFromDB.getPassword())) {
+                return userFromDB;
             } else {
-                return "Contraseña incorrecta";
+                throw new RuntimeException("Incorrect password");
             }
         } else {
-            return "Usuario no encontrado";
+            throw new RuntimeException("User not found");
         }
     }
 }

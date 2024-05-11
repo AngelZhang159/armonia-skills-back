@@ -2,11 +2,12 @@ package com.armoniacode.armoniaskills.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.util.UUID;
 
 @Entity
 @Data
@@ -14,20 +15,20 @@ import lombok.RequiredArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue
+    private UUID id;
 
     @NotNull
-    private String nombre;
+    private String fullName;
     @NotNull
-    private String apellido;
+    private String username;
     @NotNull
     private String email;
     @NotNull
-    private int telefono;
+    private int phone;
     @NotNull
-    private String contrasenia;
+    private String password;
     @NotNull
-    private String rol = "USER";
+    private String role = "USER";
 
 }

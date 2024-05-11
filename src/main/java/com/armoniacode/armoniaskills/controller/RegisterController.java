@@ -20,11 +20,11 @@ public class RegisterController {
     @PostMapping("/user/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
 
-        String contrasenia = user.getContrasenia();
+        String password = user.getPassword();
 
-        String contraseniaEncriptada = BCrypt.hashpw(contrasenia, BCrypt.gensalt());
+        String encriptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        user.setContrasenia(contraseniaEncriptada);
+        user.setPassword(encriptedPassword);
 
         return new ResponseEntity<>(userService.registerUser(user), HttpStatus.CREATED);
 
