@@ -1,10 +1,12 @@
 package com.armoniacode.armoniaskills.util;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Base64;
@@ -39,5 +41,22 @@ public class JWTUtil {
                 .signWith(key).compact();
 
         return "Bearer " + token;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+            SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    public String getUsernameFromToken(String token) {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+        SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
     }
 }

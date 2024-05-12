@@ -8,10 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -39,7 +36,27 @@ public class LoginController {
 
         } catch (RuntimeException e) {
             logger.error("Error during login", e);
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Email or password incorrect", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PostMapping("/user/loginJWT")
+    public ResponseEntity<String> loginUserJWT(@RequestHeader String Authorization) {
+        try {
+            String token = Authorization.substring(7);
+            String username = jwtUtil.getUsernameFromToken(token);
+            User user = new User();
+            user.setUsername(username);
+            HttpHeaders responseHeaders = new HttpHeaders();
+
+            String newToken = jwtUtil.getJWTToken(user.getUsername());
+            responseHeaders.set("Authorization", newToken);
+
+            return new ResponseEntity<>("User logged in successfully", responseHeaders, HttpStatus.OK);
+
+        } catch (RuntimeException e) {
+            logger.error("Token incorrecto", e);
+            return new ResponseEntity<>("Token incorrecto", HttpStatus.UNAUTHORIZED);
         }
     }
 }
