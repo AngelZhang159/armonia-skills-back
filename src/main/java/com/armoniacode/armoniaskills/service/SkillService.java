@@ -29,7 +29,7 @@ public class SkillService {
         return  skill;
     }
 
-    public Skill updateSkillById(Skill skillUpdated, UUID id){
+    public Skill updateSkillById(UUID id, Skill skillUpdated){
         Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("The skill with id: " + id + " doesn't exist"));
 
         return Skill.builder()

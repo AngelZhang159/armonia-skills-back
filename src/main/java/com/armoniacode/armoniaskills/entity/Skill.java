@@ -27,7 +27,13 @@ public class Skill {
     private String description;
 
     @Column(nullable = false)
+    private String category;
+
+    @Column(nullable = false)
     private Double price;
+
+    @Column(nullable = false)
+    private String location;
 
     @Column(nullable = false)
     private UUID userID;
