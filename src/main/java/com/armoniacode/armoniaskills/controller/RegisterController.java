@@ -18,7 +18,7 @@ public class RegisterController {
     }
 
     @PostMapping("/user/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
 
         String password = user.getPassword();
 
@@ -26,7 +26,11 @@ public class RegisterController {
 
         user.setPassword(encriptedPassword);
 
-        return new ResponseEntity<>(userService.registerUser(user), HttpStatus.CREATED);
-
+        String result = userService.registerUser(user);
+        if (result.equals("User registered")) {
+            return new ResponseEntity<>(result, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.CONFLICT);
+        }
     }
 }

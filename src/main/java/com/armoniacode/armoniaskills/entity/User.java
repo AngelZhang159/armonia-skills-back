@@ -1,9 +1,9 @@
 package com.armoniacode.armoniaskills.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -18,17 +18,17 @@ public class User {
     @GeneratedValue
     private UUID id;
 
-    @NotNull
+    @Column(nullable = false)
     private String fullName;
-    @NotNull
+    @Column(unique = true, nullable = false)
     private String username;
-    @NotNull
+    @Column(unique = true, nullable = false)
     private String email;
-    @NotNull
+    @Column(nullable = false)
     private int phone;
-    @NotNull
+    @Column(nullable = false)
     private String password;
-    @NotNull
+    @Column(nullable = false)
     private String role = "USER";
 
 }

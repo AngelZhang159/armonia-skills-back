@@ -1,18 +1,21 @@
 package com.armoniacode.armoniaskills.util;
 
+import com.armoniacode.armoniaskills.controller.LoginController;
+import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -20,8 +23,19 @@ public class JWTUtil {
 
     private static final String SECRET_KEY = "1e3e9a52af68343a63521fd8b6825584fc9dbe634ac81060f5cfa0b3b526daee"; //Generado con SHA256: ArmoniaSkills
     private static final long TOKEN_EXPIRATION_TIME = 7; // 7 days
+    private final UserRepository userRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
+    public JWTUtil(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public String getJWTToken(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
 
@@ -30,7 +44,7 @@ public class JWTUtil {
 
         String token = Jwts
                 .builder()
-                .id(UUID.randomUUID().toString())
+                .id(user.getId().toString())
                 .subject(username)
                 .claim("authorities",
                         grantedAuthorities.stream()
@@ -58,5 +72,17 @@ public class JWTUtil {
         byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
         SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
+    }
+
+
+    public Optional<User> getUserFromToken(String token) {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+        SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+
+        UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
+
+        logger.info("UUID: {}", uuid);
+
+        return userRepository.findById(uuid);
     }
 }

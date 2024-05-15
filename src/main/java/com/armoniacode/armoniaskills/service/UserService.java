@@ -15,8 +15,17 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User registerUser(User user) {
-        return userRepository.save(user);
+    public String registerUser(User user) {
+        User existingUser = userRepository.findByUsername(user.getUsername());
+        if (existingUser != null) {
+            return "Username already exists";
+        }
+        existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser != null) {
+            return "Email already exists";
+        }
+        userRepository.save(user);
+        return "User registered";
     }
 
     public User loginUser(User user) {
@@ -30,5 +39,9 @@ public class UserService {
         } else {
             throw new RuntimeException("User not found");
         }
+    }
+
+    public void save(User userToUpdate) {
+        userRepository.save(userToUpdate);
     }
 }
