@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @RequestMapping("/api/v1")
 @RestController
 public class RegisterController {
@@ -25,6 +27,8 @@ public class RegisterController {
         String encriptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
         user.setPassword(encriptedPassword);
+
+        user.setRoles(Collections.singleton("USER"));
 
         String result = userService.registerUser(user);
         if (result.equals("User registered")) {

@@ -74,6 +74,10 @@ public class UserController {
             userToUpdate.setPhone(user.getPhone());
         }
 
+        if (user.getImageURL() != null) {
+            userToUpdate.setImageURL(user.getImageURL());
+        }
+
         userService.save(userToUpdate);
 
         return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
