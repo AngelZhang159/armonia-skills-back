@@ -32,14 +32,18 @@ public class SkillService {
     public Skill updateSkillById(UUID id, Skill skillUpdated){
         Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("The skill with id: " + id + " doesn't exist"));
 
-        return Skill.builder()
+        skill = Skill.builder()
                 .id(skill.getId())
                 .title(skillUpdated.getTitle() != null ? skillUpdated.getTitle() : skill.getTitle())
                 .description(skillUpdated.getDescription() != null ? skillUpdated.getDescription() : skill.getDescription())
+                .category(skillUpdated.getCategory() != null ? skillUpdated.getDescription() : skill.getDescription())
                 .price(skillUpdated.getPrice() != null ? skillUpdated.getPrice() : skill.getPrice())
+                .location(skillUpdated.getPrice() != null ? skillUpdated.getLocation() : skill.getLocation())
                 .userID(skill.getUserID())
                 .imageList(skillUpdated.getImageList() != null ? skillUpdated.getImageList() : skill.getImageList())
                 .build();
+
+        return skillRepository.save(skill);
     }
 
     public void deleteSkill(UUID id){

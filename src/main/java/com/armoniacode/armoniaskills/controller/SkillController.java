@@ -30,18 +30,19 @@ public class SkillController {
     }
 
     @GetMapping("/{id}")
-    public Skill getSkillById(@RequestParam("id")UUID id){
+    public Skill getSkillById(@PathVariable("id")UUID id){
         return skillService.getSkillById(id);
     }
 
     @PutMapping("/{id}")
-    public Skill updateSkillById(@RequestParam("id") UUID id, @RequestBody Skill skill){
+    public Skill updateSkillById(@PathVariable("id") UUID id, @RequestBody Skill skill){
         return  skillService.updateSkillById(id, skill);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSkill(@RequestParam("id") UUID id){
+    public String deleteSkill(@PathVariable("id") UUID id){
         skillService.deleteSkill(id);
+        return "Skill with id: " + id + " deleted";
     }
 
 
