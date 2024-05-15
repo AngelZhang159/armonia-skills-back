@@ -85,4 +85,15 @@ public class JWTUtil {
 
         return userRepository.findById(uuid);
     }
+
+    public UUID getUUID(String token) {
+
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+        SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+
+        UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
+
+        return uuid;
+
+    }
 }

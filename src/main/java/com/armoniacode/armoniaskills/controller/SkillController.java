@@ -2,6 +2,7 @@ package com.armoniacode.armoniaskills.controller;
 
 import com.armoniacode.armoniaskills.entity.Skill;
 import com.armoniacode.armoniaskills.service.SkillService;
+import com.armoniacode.armoniaskills.util.JWTUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,12 @@ import java.util.UUID;
 public class SkillController {
 
     private final SkillService skillService;
+    private final JWTUtil jwtUtil;
 
-    public SkillController(SkillService skillService) {
+
+    public SkillController(SkillService skillService, JWTUtil jwtUtil) {
         this.skillService = skillService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -25,7 +29,11 @@ public class SkillController {
     }
 
     @PostMapping
-    public ResponseEntity<Skill> postSkill(@RequestBody Skill skill){
+    public ResponseEntity<Skill> postSkill(@RequestHeader String Authorization, @RequestBody Skill skill){
+
+        String token = Authorization.substring(7);
+        UUID userID = jwtUtil.getUUID(token);
+        skill.setUserID(userID);
         return new ResponseEntity<>(skillService.postSkill(skill), HttpStatus.CREATED);
     }
 

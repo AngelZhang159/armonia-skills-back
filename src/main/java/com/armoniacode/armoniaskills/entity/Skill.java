@@ -38,7 +38,7 @@ public class Skill {
     @Column(nullable = false)
     private UUID userID;
 
-    @OneToMany
-    private List<Image> imageList;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> imageList;
 
 }
