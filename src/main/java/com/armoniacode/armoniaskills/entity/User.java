@@ -20,15 +20,21 @@ public class User {
 
     @Column(nullable = false)
     private String fullName;
+
     @Column(unique = true, nullable = false)
     private String username;
+
     @Column(unique = true, nullable = false)
     private String email;
+
     @Column(nullable = false)
     private int phone;
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false)
     private String role = "USER";
 
+    private String imageURL;
 }
