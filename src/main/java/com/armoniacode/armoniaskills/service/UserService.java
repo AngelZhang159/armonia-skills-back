@@ -1,9 +1,13 @@
 package com.armoniacode.armoniaskills.service;
 
+import com.armoniacode.armoniaskills.entity.Status;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -42,6 +46,20 @@ public class UserService {
     }
 
     public void save(User userToUpdate) {
+        userToUpdate.setStatus(Status.ONLINE);
         userRepository.save(userToUpdate);
+    }
+
+    public void disconnect(User userToUpdate) {
+        User user = userRepository.findById(userToUpdate.getId()).orElse(null);
+
+        if (user != null) {
+            user.setStatus(Status.OFFLINE);
+            userRepository.save(user);
+        }
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findByStatus(Status.ONLINE);
     }
 }

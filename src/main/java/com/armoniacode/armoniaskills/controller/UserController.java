@@ -7,9 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -82,4 +86,33 @@ public class UserController {
 
         return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
     }
+
+    @MessageMapping("/user.addUser")
+    @SendTo("/user/topic")
+    public User addUser(@Payload User user) {
+        userService.save(user);
+        return user;
+    }
+
+    @MessageMapping("/user.disconnectUser")
+    @SendTo("/user/topic")
+    public User disconnectUser(@Payload User user) {
+        userService.disconnect(user);
+        return user;
+    }
+
+    @GetMapping("/user/allUsers")
+    public ResponseEntity<List> getAllUsers(@RequestHeader String Authorization) {
+
+        String token = Authorization.substring(7);
+
+        Optional<User> user = jwtUtil.getUserFromToken(token);
+
+        if (user.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
 }

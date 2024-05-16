@@ -18,17 +18,17 @@ public class WebSocketEventListener {
     private final SimpMessageSendingOperations messageTemplate;
 
     //Si necesitamos un listener para otra accion es lo mismo que este pero con otro evento
-    @EventListener
-    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event){
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
-        if (username != null){
-            log.info("User disconnected: {}", username);
-            var chatMessage = ChatMessage.builder()
-                    .type(MessageType.LEAVE)
-                    .sender(username)
-                    .build();
-            messageTemplate.convertAndSend("/api/v1/topic/public", chatMessage);
-        }
-    }
+//    @EventListener
+//    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event){
+//        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+//        String username = (String) headerAccessor.getSessionAttributes().get("username");
+//        if (username != null){
+//            log.info("User disconnected: {}", username);
+//            var chatMessage = ChatMessage.builder()
+//                    .type(MessageType.LEAVE)
+//                    .sender(username)
+//                    .build();
+//            messageTemplate.convertAndSend("/api/v1/topic/public", chatMessage);
+//        }
+//    }
 }

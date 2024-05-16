@@ -35,6 +35,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    private Status status;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Collection<String> roles;
 
