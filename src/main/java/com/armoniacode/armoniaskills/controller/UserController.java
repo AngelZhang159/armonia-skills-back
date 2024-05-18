@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -135,6 +136,12 @@ public class UserController {
 
         return new ResponseEntity<>("Review: " + review.getContent() + "  added succesfully to user: " + userToUpdate.getUsername(), HttpStatus.OK);
 
+    }
+
+    @GetMapping("/user")
+    public User getUserById(@RequestParam UUID id) {
+        //DEVUELVE USUARIO ENTERO, QUITAR LUEGO COSAS QUE NO DEBERIAN ESTAR
+        return userService.getUserById(id);
     }
 
 }

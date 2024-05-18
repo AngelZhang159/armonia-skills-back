@@ -5,6 +5,7 @@ import com.armoniacode.armoniaskills.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,16 +16,16 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
 
     public Optional<UUID> getChatRoomId(UUID senderId, UUID receiverId, boolean createIfNotExist) {
-    return chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId)
-            .map(ChatRoom::getId)
-            .or(() -> {
-                if (createIfNotExist) {
-                    UUID chatId = createChat(senderId, receiverId);
-                    return Optional.of(chatId);
-                }
-                return Optional.empty();
-            });
-}
+        return chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId)
+                .map(ChatRoom::getId)
+                .or(() -> {
+                    if (createIfNotExist) {
+                        UUID chatId = createChat(senderId, receiverId);
+                        return Optional.of(chatId);
+                    }
+                    return Optional.empty();
+                });
+    }
 
     private UUID createChat(UUID senderId, UUID receiverId) {
         UUID chatId = UUID.randomUUID();
@@ -44,5 +45,9 @@ public class ChatRoomService {
         chatRoomRepository.save(idSender);
         chatRoomRepository.save(idReceiver);
         return chatId;
+    }
+
+    public List<ChatRoom> findAllByUser(UUID userId) {
+        return chatRoomRepository.findAllBySenderIdOrReceiverId(userId, userId);
     }
 }

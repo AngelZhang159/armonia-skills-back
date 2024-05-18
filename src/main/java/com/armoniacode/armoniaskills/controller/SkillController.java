@@ -28,12 +28,12 @@ public class SkillController {
     }
 
     @GetMapping
-    public List<Skill> getSkills(){
+    public List<Skill> getSkills() {
         return skillService.getSkillList();
     }
 
     @PostMapping
-    public ResponseEntity<Skill> postSkill(@RequestHeader String Authorization, @RequestBody Skill skill){
+    public ResponseEntity<Skill> postSkill(@RequestHeader String Authorization, @RequestBody Skill skill) {
 
         logger.error(skill.toString());
 
@@ -44,21 +44,20 @@ public class SkillController {
     }
 
     @GetMapping("/{id}")
-    public Skill getSkillById(@PathVariable("id")UUID id){
+    public Skill getSkillById(@PathVariable("id") UUID id) {
         return skillService.getSkillById(id);
     }
 
     @PutMapping("/{id}")
-    public Skill updateSkillById(@PathVariable("id") UUID id, @RequestBody Skill skill){
-        return  skillService.updateSkillById(id, skill);
+    public Skill updateSkillById(@PathVariable("id") UUID id, @RequestBody Skill skill) {
+        return skillService.updateSkillById(id, skill);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteSkill(@PathVariable("id") UUID id){
+    public String deleteSkill(@PathVariable("id") UUID id) {
         skillService.deleteSkill(id);
         return "Skill with id: " + id + " deleted";
     }
-
 
 
 }

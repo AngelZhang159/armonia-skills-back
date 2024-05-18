@@ -96,4 +96,39 @@ public class JWTUtil {
         return uuid;
 
     }
+
+    public double getBalance(String token) {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+        SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+
+        UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
+        User user = userRepository.findById(uuid).orElse(null);
+
+        if (user != null) {
+            return user.getBalance();
+        } else {
+            return 0;
+        }
+    }
+
+    public void updateBalance(String token, Double balance) {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+        SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+
+        UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
+        User user = userRepository.findById(uuid).orElse(null);
+
+        if (user != null) {
+            userRepository.save(user).setBalance(balance);
+        }
+    }
+
+    public double transferBalance(String token, UUID toUserID, Double balance) {
+        byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
+        SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+
+        UUID fromUserID = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
+
+        return 0;
+    }
 }

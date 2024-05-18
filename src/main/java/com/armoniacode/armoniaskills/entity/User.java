@@ -38,6 +38,9 @@ public class User implements UserDetails {
 
     private Status status;
 
+    @Column(nullable = false)
+    private double balance;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Collection<String> roles;
 
