@@ -46,7 +46,7 @@ public class User implements UserDetails {
 
     private String imageURL;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Review> reviewList;
 
     @Override

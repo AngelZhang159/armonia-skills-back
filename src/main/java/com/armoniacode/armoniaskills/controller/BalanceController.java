@@ -41,4 +41,24 @@ public class BalanceController {
 
         return new ResponseEntity<>(jwtUtil.transferBalance(token, toUserID, balance), org.springframework.http.HttpStatus.OK);
     }
+
+    @PatchMapping("/balance/deposit")
+    public ResponseEntity<String> depositBalance(@RequestHeader("Authorization") String Authorization, @RequestBody Double balance) {
+
+        String token = Authorization.substring(7);
+        jwtUtil.depositBalance(token, balance);
+        return new ResponseEntity<>("User balance updated", org.springframework.http.HttpStatus.OK);
+    }
+
+    @PatchMapping("/balance/withdraw")
+    public ResponseEntity<String> withdrawBalance(@RequestHeader("Authorization") String Authorization, @RequestBody Double balance) {
+
+        String token = Authorization.substring(7);
+        try {
+            jwtUtil.withdrawBalance(token, balance);
+            return new ResponseEntity<>("User balance updated", org.springframework.http.HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Insufficient funds", org.springframework.http.HttpStatus.BAD_REQUEST);
+        }
+    }
 }
