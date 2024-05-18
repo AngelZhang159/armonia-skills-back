@@ -1,5 +1,6 @@
 package com.armoniacode.armoniaskills.controller;
 
+import com.armoniacode.armoniaskills.entity.Review;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.service.UserService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
@@ -113,6 +114,27 @@ public class UserController {
         }
 
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @PatchMapping("user/addReview")
+    public ResponseEntity<String> addReview(@RequestHeader String Authorization, @RequestBody Review review){
+
+        String token = Authorization.substring(7);
+
+        Optional<User> userFromToken = jwtUtil.getUserFromToken(token);
+
+        if (userFromToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User userToUpdate = userFromToken.get();
+
+        userToUpdate.addReview(review);
+
+        userService.save(userToUpdate);
+
+        return new ResponseEntity<>("Review: " + review.getContent() + "  added succesfully to user: " + userToUpdate.getUsername(), HttpStatus.OK);
+
     }
 
 }
