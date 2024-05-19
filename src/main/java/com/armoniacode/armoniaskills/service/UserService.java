@@ -3,6 +3,7 @@ package com.armoniacode.armoniaskills.service;
 import com.armoniacode.armoniaskills.entity.Status;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.repository.UserRepository;
+import com.armoniacode.armoniaskills.util.JWTUtil;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,11 @@ import java.util.UUID;
 @Service
 public class UserService {
 
+    private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(JWTUtil jwtUtil, UserRepository userRepository) {
+        this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
     }
 

@@ -1,6 +1,7 @@
 package com.armoniacode.armoniaskills.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.*;
 
@@ -25,10 +26,12 @@ public class ChatMessage {
 //    }
 
     @Id
+    @GeneratedValue
     private UUID id;
     private UUID chatId;
     private UUID sender;
     private UUID receiver;
+    private UUID skillId;
     private String content;
     private MessageType type;
     private Date date;

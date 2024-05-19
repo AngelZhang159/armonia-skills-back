@@ -40,6 +40,7 @@ public class SkillController {
         String token = Authorization.substring(7);
         UUID userID = jwtUtil.getUUID(token);
         skill.setUserID(userID);
+
         return new ResponseEntity<>(skillService.postSkill(skill), HttpStatus.CREATED);
     }
 

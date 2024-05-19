@@ -21,14 +21,14 @@ public class ChatMessageService {
 //    SI NO EXISTE UN CHATROOM ENTRE LOS DOS USUARIOS SE CREA UNO NUEVO
 
     public ChatMessage save(ChatMessage chatMessage) {
-        Optional<UUID> chatId = chatRoomService.getChatRoomId(chatMessage.getSender(), chatMessage.getReceiver(), true);
+        Optional<UUID> chatId = chatRoomService.getChatRoomId(chatMessage.getSender(), chatMessage.getReceiver(), chatMessage.getSkillId(), true);
 
         chatMessage.setChatId(chatId.get());
         return chatMessageRepository.save(chatMessage);
     }
 
-    public List<ChatMessage> findChatMessages(UUID sender, UUID receiver) {
-        Optional<UUID> chatId = chatRoomService.getChatRoomId(sender, receiver, false);
+    public List<ChatMessage> findChatMessages(UUID sender, UUID receiver, UUID skillId) {
+        Optional<UUID> chatId = chatRoomService.getChatRoomId(sender, receiver, skillId, false);
         return chatId.map(chatMessageRepository::findAllByChatId).orElse(new ArrayList<>());
     }
 }
