@@ -21,15 +21,12 @@ public class Review {
 
     private String content;
 
-    @Column(nullable = false)
     private int stars;
 
     private UUID skillId;
 
-    @Column(nullable = false)
     private UUID sellerId;
 
-    @Column(nullable = false)
     private UUID buyerId;
 
 

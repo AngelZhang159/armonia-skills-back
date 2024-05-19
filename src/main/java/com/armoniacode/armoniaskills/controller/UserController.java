@@ -128,7 +128,10 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        User userToUpdate = userFromToken.get();
+        User userToUpdate = getUserById(review.getSellerId());
+
+        User userBuyer = userFromToken.get();
+        review.setBuyerId(userBuyer.getId());
 
         userToUpdate.addReview(review);
 
