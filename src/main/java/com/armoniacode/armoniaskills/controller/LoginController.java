@@ -50,12 +50,13 @@ public class LoginController {
             HttpHeaders responseHeaders = new HttpHeaders();
 
             String newToken = jwtUtil.getJWTToken(user.getUsername());
+
             responseHeaders.set("Authorization", newToken);
 
             return new ResponseEntity<>("User logged in successfully", responseHeaders, HttpStatus.OK);
 
         } catch (RuntimeException e) {
-            logger.error("Token incorrecto", e);
+            logger.error("Someone tried to login with an invalid token");
             return new ResponseEntity<>("Token incorrecto", HttpStatus.UNAUTHORIZED);
         }
     }

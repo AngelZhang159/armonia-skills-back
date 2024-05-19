@@ -33,9 +33,12 @@ public class JWTUtil {
 
     public String getJWTToken(String username) {
         User user = userRepository.findByUsername(username);
+
         if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            logger.error("User not found");
+            throw new UsernameNotFoundException("User not found");
         }
+
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
                 .commaSeparatedStringToAuthorityList("ROLE_USER");
 

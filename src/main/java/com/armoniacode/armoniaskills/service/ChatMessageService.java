@@ -31,4 +31,8 @@ public class ChatMessageService {
         Optional<UUID> chatId = chatRoomService.getChatRoomId(sender, receiver, skillId, false);
         return chatId.map(chatMessageRepository::findAllByChatId).orElse(new ArrayList<>());
     }
+
+    public ChatMessage findLastMessage(UUID id) {
+        return chatMessageRepository.findTopByChatIdOrderByDateDesc(id);
+    }
 }

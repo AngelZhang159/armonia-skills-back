@@ -1,11 +1,10 @@
 package com.armoniacode.armoniaskills.controller;
 
-import com.armoniacode.armoniaskills.entity.ChatMessage;
-import com.armoniacode.armoniaskills.entity.ChatNotification;
-import com.armoniacode.armoniaskills.entity.ChatRoom;
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.*;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;
+import com.armoniacode.armoniaskills.service.SkillService;
+import com.armoniacode.armoniaskills.service.UserService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +29,8 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
+    private final UserService userService;
+    private final SkillService skillService;
 
 
     //    ESTE ENDPOINT RECIBE UN ChatMessage Y LO GUARDA CON LOS DATOS QUE TIENE DENTRO (VER ENTITY ChatMessage)
@@ -61,18 +63,39 @@ public class ChatController {
         }
     }
 
-//    SE USA PARA MOSTRAR LA LISTA DE CHATS EN LA VENTANA CHAT
+    //    SE USA PARA MOSTRAR LA LISTA DE CHATS EN LA VENTANA CHAT
 //    COGE EL TOKEN Y DEVUELVE UNA LISTA DE ID DE CHATROOMS DONDE EL USUARIO ESTA PARTICIPANDO
     @GetMapping("/api/v1/chat")
-    public ResponseEntity<List<ChatRoom>> getChats(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<ChatDTO>> getChats(@RequestHeader("Authorization") String token) {
 
         UUID id = jwtUtil.getUUID(token.substring(7));
 
-        return ResponseEntity.ok(chatRoomService.findAllByUser(id));
+        List<ChatRoom> chatRooms = chatRoomService.findAllByUser(id);
+
+        ArrayList<ChatDTO> chatDTOs = new ArrayList<>();
+
+        for (ChatRoom chatRoom : chatRooms) {
+            chatRoom.setSenderId(id);
+
+            User user = userService.getUserById(chatRoom.getReceiverId());
+            Skill skill = skillService.getSkillById(chatRoom.getSkill());
+            ChatMessage lastMessage = chatMessageService.findLastMessage(chatRoom.getId());
+
+            chatDTOs.add(ChatDTO.builder()
+                    .chatId(chatRoom.getId())
+                    .fotoPerfil(user.getImageURL())
+                    .nombreUsuario(user.getUsername())
+                    .nombreSkill(skill.getTitle())
+                    .ultimoMensaje(Optional.ofNullable(lastMessage).map(ChatMessage::getContent).orElse(null))
+                    .ultimaHora(Optional.ofNullable(lastMessage).map(ChatMessage::getDate).orElse(null))
+                    .build());
+        }
+
+        return ResponseEntity.ok(chatDTOs);
     }
 
 
-//    SE USA PARA CREAR UN NUEVO CHATROOM ENTRE DOS USUARIOS
+    //    SE USA PARA CREAR UN NUEVO CHATROOM ENTRE DOS USUARIOS
 //    COGE EL TOKEN Y EL ID DEL USUARIO CON EL QUE SE QUIERE EMPEZAR UN CHAT
 //    DEVUELVE EL CHATROOM CREADO O EL YA EXISTENTE SI HAY UNO, LUEGO HAY QUE ABRIR LA VENTANA CHATROOM DE ESE ID
     @GetMapping("/api/v1/chat/new/{id}/{skillId}")
@@ -80,7 +103,7 @@ public class ChatController {
 
         UUID userId = jwtUtil.getUUID(token.substring(7));
 
-        Optional<UUID> chatId = chatRoomService.getChatRoomId(userId, id, skillId,true);
+        Optional<UUID> chatId = chatRoomService.getChatRoomId(userId, id, skillId, true);
 
         return ResponseEntity.ok(chatRoomService.findById(chatId.get()));
     }

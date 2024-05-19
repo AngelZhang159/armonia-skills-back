@@ -16,7 +16,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
 
     public Optional<UUID> getChatRoomId(UUID senderId, UUID receiverId, UUID skillId, boolean createIfNotExist) {
-        return chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId)
+        return chatRoomRepository.findBySenderIdAndReceiverIdAndSkill(senderId, receiverId, skillId)
                 .map(ChatRoom::getId)
                 .or(() -> {
                     if (createIfNotExist) {
@@ -32,6 +32,7 @@ public class ChatRoomService {
         ChatRoom idSender = ChatRoom.builder()
                 .senderId(senderId)
                 .receiverId(receiverId)
+                .skill(skillId)
                 .build();
 
         ChatRoom savedChatRoom = chatRoomRepository.save(idSender);

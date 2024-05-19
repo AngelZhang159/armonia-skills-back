@@ -27,7 +27,6 @@ public class ChatRoom {
     @Id
     @GeneratedValue
     private UUID id;
-    private UUID chatId;
     private UUID senderId;
     private UUID receiverId;
     private UUID skill;
