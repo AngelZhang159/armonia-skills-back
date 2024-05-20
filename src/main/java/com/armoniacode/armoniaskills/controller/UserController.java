@@ -130,8 +130,12 @@ public class UserController {
 
         User userToUpdate = getUserById(review.getSellerId());
 
+        logger.info(review.toString());
+
         User userBuyer = userFromToken.get();
         review.setBuyerId(userBuyer.getId());
+        review.setImageUrl(userBuyer.getImageURL());
+        review.setUsername(userBuyer.getUsername());
 
         userToUpdate.addReview(review);
 

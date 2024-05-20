@@ -29,6 +29,10 @@ public class Review {
 
     private UUID buyerId;
 
+    private String imageUrl;
+
+    private String username;
+
 
 
 }
