@@ -33,7 +33,6 @@ public class ChatMessage {
     private UUID receiver;
     private UUID skillId;
     private String content;
-    private MessageType type;
     private Date date;
 
 }
