@@ -6,18 +6,23 @@ import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketChatHandler extends TextWebSocketHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketChatHandler.class);
 
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
@@ -32,6 +37,8 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        logger.warn("New WebSocket connection CONNECTED: {}", session.getId());
+
         String token = getTokenFromSession(session);
         if (jwtUtil.validateToken(token)) {
             String userId = jwtUtil.getUUID(token).toString();
@@ -56,7 +63,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         String msg = jsonObject.getString("message");
 
         String senderId = (String) session.getAttributes().get("senderId");
-        ChatRoom chatRoom = chatRoomService.findById(UUID.fromString(senderId));
+        ChatRoom chatRoom = chatRoomService.findById(UUID.fromString(chatId));
         String receiverId;
         if (chatRoom.getSenderId().equals(UUID.fromString(senderId))) {
             receiverId = chatRoom.getReceiverId().toString();
@@ -68,7 +75,9 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
                 .chatId(UUID.fromString(chatId))
                 .sender(UUID.fromString(senderId))
                 .receiver(UUID.fromString(receiverId))
+                .skillId(chatRoom.getSkill())
                 .content(msg)
+                .date(new Timestamp(System.currentTimeMillis()))
                 .build();
 
         ChatMessage savedMsg = chatMessageService.save(chatMessage);
@@ -77,6 +86,8 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        logger.warn("Old WebSocket connection DISCONNECTED: {}", session.getId());
+
         sessions.remove(session.getId());
     }
 
@@ -87,6 +98,9 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         WebSocketSession recipientSession = sessions.get(recipientId);
         if (recipientSession != null && recipientSession.isOpen()) {
             recipientSession.sendMessage(textMessage);
+        } else {
+            logger.warn("Recipient is not connected");
+//            MANDAR NOTIFICACION DE MENSAJE
         }
     }
 

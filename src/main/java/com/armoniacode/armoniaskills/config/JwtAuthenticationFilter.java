@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
 
     public JwtAuthenticationFilter(JWTUtil jwtUtil) {
         this.jwtUtil = jwtUtil;

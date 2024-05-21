@@ -5,8 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.*;
 
-import java.sql.Date;
 import java.util.UUID;
+import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
@@ -33,6 +33,6 @@ public class ChatMessage {
     private UUID receiver;
     private UUID skillId;
     private String content;
-    private Date date;
+    private Timestamp date;
 
 }

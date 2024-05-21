@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, String> {
 
-    List<ChatMessage> findAllByChatId(UUID value);
+    List<ChatMessage> findAllByChatIdOrderByDate(UUID value);
 
     ChatMessage findTopByChatIdOrderByDateDesc(UUID id);
 }

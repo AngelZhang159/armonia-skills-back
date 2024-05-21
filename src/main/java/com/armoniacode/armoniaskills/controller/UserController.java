@@ -151,4 +151,17 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    @GetMapping("/user/id")
+    public ResponseEntity<UUID> getUserId(@RequestHeader String Authorization) {
+
+        String token = Authorization.substring(7);
+
+        Optional<User> user = jwtUtil.getUserFromToken(token);
+
+        if (user.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<>(user.get().getId(), HttpStatus.OK);
+    }
 }

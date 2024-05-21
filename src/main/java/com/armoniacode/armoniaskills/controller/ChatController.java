@@ -29,13 +29,23 @@ public class ChatController {
     private final SkillService skillService;
 
     // Retrieve messages for a specific chat room
-    @GetMapping("/api/v1/messages/{chatId}")
-    public ResponseEntity<List<ChatMessage>> findChatMessages(@RequestHeader("Authorization") String Authorization, @PathVariable UUID chatId) {
+        @GetMapping("/api/v1/messages/{chatId}")
+    public ResponseEntity<List<MessageDTO>> findChatMessages(@RequestHeader("Authorization") String Authorization, @PathVariable UUID chatId) {
         String token = Authorization.substring(7);
         ChatRoom chatRoom = chatRoomService.findById(chatId);
 
         if (chatRoom.getReceiverId().equals(jwtUtil.getUUID(token)) || chatRoom.getSenderId().equals(jwtUtil.getUUID(token))) {
-            return ResponseEntity.ok(chatMessageService.findChatMessages(chatRoom.getSenderId(), chatRoom.getReceiverId(), chatRoom.getSkill()));
+
+            List<ChatMessage> listaMensajes = chatMessageService.findChatMessages(chatId);
+
+            List<MessageDTO> listaMensajesDTO = listaMensajes.stream().map(chatMessage -> MessageDTO.builder()
+                    .sender(chatMessage.getSender())
+                    .receiver(chatMessage.getReceiver())
+                    .content(chatMessage.getContent())
+                    .date(chatMessage.getDate())
+                    .build()).toList();
+
+            return ResponseEntity.ok(listaMensajesDTO);
         } else {
             return ResponseEntity.badRequest().build();
         }
