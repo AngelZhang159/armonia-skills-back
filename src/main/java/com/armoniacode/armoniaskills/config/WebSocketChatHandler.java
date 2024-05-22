@@ -1,10 +1,12 @@
 package com.armoniacode.armoniaskills.config;
 
 import com.armoniacode.armoniaskills.entity.ChatMessage;
+import com.armoniacode.armoniaskills.entity.ChatMessageDTO;
 import com.armoniacode.armoniaskills.entity.ChatRoom;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         if (jwtUtil.validateToken(token)) {
             String userId = jwtUtil.getUUID(token).toString();
             session.getAttributes().put("senderId", userId);
-            sessions.put(session.getId(), session);
+            sessions.put(userId, session);
         } else {
             session.close(CloseStatus.BAD_DATA);
         }
@@ -88,19 +90,31 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         logger.warn("Old WebSocket connection DISCONNECTED: {}", session.getId());
 
-        sessions.remove(session.getId());
+        String userId = (String) session.getAttributes().get("senderId");
+        sessions.remove(userId);
     }
 
 
     private void broadcastMessage(ChatMessage chatMessage) throws IOException {
-        TextMessage textMessage = new TextMessage(chatMessage.toString());
+        ChatMessageDTO chatMessageDTO = ChatMessageDTO.fromChatMessage(chatMessage);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String chatMessageJson = objectMapper.writeValueAsString(chatMessageDTO);
+        TextMessage textMessage = new TextMessage(chatMessageJson);
+
         String recipientId = chatMessage.getReceiver().toString();
         WebSocketSession recipientSession = sessions.get(recipientId);
         if (recipientSession != null && recipientSession.isOpen()) {
             recipientSession.sendMessage(textMessage);
         } else {
             logger.warn("Recipient is not connected");
-//            MANDAR NOTIFICACION DE MENSAJE
+        }
+
+        String senderId = chatMessage.getSender().toString();
+        WebSocketSession senderSession = sessions.get(senderId);
+        if (senderSession != null && senderSession.isOpen()) {
+            senderSession.sendMessage(textMessage);
+        } else {
+            logger.warn("Sender is not connected");
         }
     }
 

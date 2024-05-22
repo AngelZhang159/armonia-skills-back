@@ -17,6 +17,7 @@ public class ChatRoomService {
 
     public Optional<UUID> getChatRoomId(UUID senderId, UUID receiverId, UUID skillId, boolean createIfNotExist) {
         return chatRoomRepository.findBySenderIdAndReceiverIdAndSkill(senderId, receiverId, skillId)
+                .or(() -> chatRoomRepository.findBySenderIdAndReceiverIdAndSkill(receiverId, senderId, skillId))
                 .map(ChatRoom::getId)
                 .or(() -> {
                     if (createIfNotExist) {
