@@ -59,8 +59,12 @@ public class ChatController {
         ArrayList<ChatDTO> chatDTOs = new ArrayList<>();
 
         for (ChatRoom chatRoom : chatRooms) {
-            chatRoom.setSenderId(id);
-            User user = userService.getUserById(chatRoom.getReceiverId());
+            User user;
+            if (chatRoom.getSenderId().equals(id)) {
+                user = userService.getUserById(chatRoom.getReceiverId());
+            } else {
+                user = userService.getUserById(chatRoom.getSenderId());
+            }
             Skill skill = skillService.getSkillById(chatRoom.getSkill());
             ChatMessage lastMessage = chatMessageService.findLastMessage(chatRoom.getId());
 
