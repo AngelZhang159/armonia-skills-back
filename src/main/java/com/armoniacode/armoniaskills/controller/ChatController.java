@@ -1,5 +1,7 @@
 package com.armoniacode.armoniaskills.controller;
 
+import com.armoniacode.armoniaskills.dto.ChatDTO;
+import com.armoniacode.armoniaskills.dto.MessageDTO;
 import com.armoniacode.armoniaskills.entity.*;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;

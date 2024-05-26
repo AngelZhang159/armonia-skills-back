@@ -1,7 +1,7 @@
 package com.armoniacode.armoniaskills.config;
 
 import com.armoniacode.armoniaskills.entity.ChatMessage;
-import com.armoniacode.armoniaskills.entity.ChatMessageDTO;
+import com.armoniacode.armoniaskills.dto.ChatMessageDTO;
 import com.armoniacode.armoniaskills.entity.ChatRoom;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;

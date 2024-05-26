@@ -1,4 +1,4 @@
-package com.armoniacode.armoniaskills.entity;
+package com.armoniacode.armoniaskills.dto;
 
 import lombok.Builder;
 import lombok.Data;

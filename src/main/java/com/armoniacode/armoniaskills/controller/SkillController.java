@@ -4,6 +4,7 @@ import com.armoniacode.armoniaskills.entity.Skill;
 import com.armoniacode.armoniaskills.service.SkillService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,12 +16,11 @@ import java.util.UUID;
 
 @RequestMapping("/api/v1/skill")
 @RestController
+@Slf4j
 public class SkillController {
 
     private final SkillService skillService;
     private final JWTUtil jwtUtil;
-
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     public SkillController(SkillService skillService, JWTUtil jwtUtil) {
         this.skillService = skillService;
@@ -35,7 +35,7 @@ public class SkillController {
     @PostMapping
     public ResponseEntity<Skill> postSkill(@RequestHeader String Authorization, @RequestBody Skill skill) {
 
-        logger.error(skill.toString());
+        log.info(skill.toString());
 
         String token = Authorization.substring(7);
         UUID userID = jwtUtil.getUUID(token);

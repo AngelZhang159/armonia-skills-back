@@ -4,11 +4,12 @@ import com.armoniacode.armoniaskills.entity.Status;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import com.armoniacode.armoniaskills.util.JWTUtil;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -24,28 +25,55 @@ public class UserService {
     }
 
     public String registerUser(User user) {
+        String password = user.getPassword();
+
+        String encriptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        user.setPassword(encriptedPassword);
+
+        user.setRoles(Collections.singleton("USER"));
+
         User existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
-            return "Username already exists";
+            throw new RuntimeException("Username already exists");
         }
         existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {
-            return "Email already exists";
+            throw new RuntimeException("Email already exists");
         }
         userRepository.save(user);
         return "User registered";
     }
 
-    public User loginUser(User user) {
-        User userFromDB = userRepository.findByEmail(user.getEmail());
-        if (userFromDB != null) {
-            if (BCrypt.checkpw(user.getPassword(), userFromDB.getPassword())) {
-                return userFromDB;
-            } else {
-                throw new RuntimeException("Incorrect password");
-            }
-        } else {
-            throw new RuntimeException("User not found");
+    public HttpHeaders loginUser(User user) {
+        User loggedInUser = userRepository.findByEmail(user.getEmail());
+
+        if (loggedInUser == null) {
+            String errorMessage = String.format("User with email: %s not found", user.getEmail());
+            throw new RuntimeException(errorMessage);
+        }
+
+        if (!BCrypt.checkpw(user.getPassword(), loggedInUser.getPassword())) {
+            throw new RuntimeException("Incorrect password");
+        }
+
+        String token = jwtUtil.getJWTToken(loggedInUser.getUsername());
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Authorization", token);
+        return responseHeaders;
+    }
+
+    public HttpHeaders loginUserJWT(String token) {
+
+        try {
+            String username = jwtUtil.getUsernameFromToken(token.substring(7));
+            User user = userRepository.findByUsername(username);
+            HttpHeaders responseHeaders = new HttpHeaders();
+            String newToken = jwtUtil.getJWTToken(user.getUsername());
+            responseHeaders.set("Authorization", newToken);
+            return responseHeaders;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Incorrect JWT");
         }
     }
 

@@ -1,12 +1,10 @@
 package com.armoniacode.armoniaskills.util;
 
-import com.armoniacode.armoniaskills.controller.LoginController;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -19,13 +17,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
+@Slf4j
 public class JWTUtil {
 
     private static final String SECRET_KEY = "1e3e9a52af68343a63521fd8b6825584fc9dbe634ac81060f5cfa0b3b526daee"; //Generado con SHA256: ArmoniaSkills
     private static final long TOKEN_EXPIRATION_TIME = 7; // 7 days
     private final UserRepository userRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     public JWTUtil(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -35,7 +33,7 @@ public class JWTUtil {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
-            logger.error("User not found");
+            log.error("User not found");
             throw new UsernameNotFoundException("User not found");
         }
 
@@ -84,7 +82,7 @@ public class JWTUtil {
 
         UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
 
-        logger.info("UUID: {}", uuid);
+        log.info("UUID: {}", uuid);
 
         return userRepository.findById(uuid);
     }
