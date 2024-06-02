@@ -1,5 +1,6 @@
 package com.armoniacode.armoniaskills.controller;
 
+import com.armoniacode.armoniaskills.dto.PerfilDTO;
 import com.armoniacode.armoniaskills.entity.Review;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.service.UserService;
@@ -22,9 +23,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1")
 public class UserController {
 
-    private final JWTUtil jwtUtil;
-
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private final JWTUtil jwtUtil;
     private final UserService userService;
 
     public UserController(JWTUtil jwtUtil, UserService userService) {
@@ -76,7 +76,7 @@ public class UserController {
             userToUpdate.setUsername(user.getUsername());
         }
 
-        if (user.getPhone() != 0){
+        if (user.getPhone() != 0) {
             userToUpdate.setPhone(user.getPhone());
         }
 
@@ -118,7 +118,7 @@ public class UserController {
     }
 
     @PatchMapping("user/addReview")
-    public ResponseEntity<String> addReview(@RequestHeader String Authorization, @RequestBody Review review){
+    public ResponseEntity<String> addReview(@RequestHeader String Authorization, @RequestBody Review review) {
 
         String token = Authorization.substring(7);
 
@@ -145,6 +145,11 @@ public class UserController {
 
     }
 
+    @GetMapping("/user/getAllReviews/{id}")
+    public ResponseEntity<List<Review>> getAllReviews(@PathVariable UUID id) {
+        return new ResponseEntity<>(userService.getReviews(id), HttpStatus.OK);
+    }
+
     @GetMapping("/user")
     public User getUserById(@RequestParam UUID id) {
         //DEVUELVE USUARIO ENTERO, QUITAR LUEGO COSAS QUE NO DEBERIAN ESTAR
@@ -163,5 +168,10 @@ public class UserController {
         }
 
         return new ResponseEntity<>(user.get().getId(), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/perfil/{id}")
+    public ResponseEntity<PerfilDTO> getUser(@PathVariable UUID id) {
+        return new ResponseEntity<>(userService.getPerfilById(id), HttpStatus.OK);
     }
 }

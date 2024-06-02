@@ -1,7 +1,11 @@
 package com.armoniacode.armoniaskills.service;
 
+import com.armoniacode.armoniaskills.dto.PerfilDTO;
+import com.armoniacode.armoniaskills.entity.Review;
+import com.armoniacode.armoniaskills.entity.Skill;
 import com.armoniacode.armoniaskills.entity.Status;
 import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.repository.SkillRepository;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import com.armoniacode.armoniaskills.util.JWTUtil;
 import org.springframework.http.HttpHeaders;
@@ -18,10 +22,12 @@ public class UserService {
 
     private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
+    private final SkillRepository skillRepository;
 
-    public UserService(JWTUtil jwtUtil, UserRepository userRepository) {
+    public UserService(JWTUtil jwtUtil, UserRepository userRepository, SkillRepository skillRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.skillRepository = skillRepository;
     }
 
     public String registerUser(User user) {
@@ -97,5 +103,17 @@ public class UserService {
 
     public User getUserById(UUID id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public List<Review> getReviews(UUID id) {
+        return userRepository.findById(id).orElse(null).getReviewList();
+    }
+
+    public PerfilDTO getPerfilById(UUID id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        List<Skill> listaSkills = skillRepository.findAllByUserID(id);
+
+        return new PerfilDTO(user.getUsername(), user.getImageURL(), user.getPhone(), user.getReviewList(), listaSkills);
     }
 }

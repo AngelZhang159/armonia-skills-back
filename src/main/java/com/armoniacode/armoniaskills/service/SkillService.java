@@ -16,20 +16,20 @@ public class SkillService {
         this.skillRepository = skillRepository;
     }
 
-    public List<Skill> getSkillList(){
+    public List<Skill> getSkillList() {
         return skillRepository.findAll();
     }
 
-    public Skill postSkill(Skill skill){
+    public Skill postSkill(Skill skill) {
         return skillRepository.save(skill);
     }
 
-    public Skill getSkillById(UUID id){
+    public Skill getSkillById(UUID id) {
         Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("The skill with id: " + id + " doesn't exist"));
-        return  skill;
+        return skill;
     }
 
-    public Skill updateSkillById(UUID id, Skill skillUpdated){
+    public Skill updateSkillById(UUID id, Skill skillUpdated) {
         Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("The skill with id: " + id + " doesn't exist"));
 
         skill = Skill.builder()
@@ -46,7 +46,8 @@ public class SkillService {
         return skillRepository.save(skill);
     }
 
-    public void deleteSkill(UUID id){
+    public void deleteSkill(UUID id) {
         skillRepository.deleteById(id);
     }
+
 }

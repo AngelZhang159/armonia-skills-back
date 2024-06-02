@@ -2,7 +2,10 @@ package com.armoniacode.armoniaskills.controller;
 
 import com.armoniacode.armoniaskills.dto.ChatDTO;
 import com.armoniacode.armoniaskills.dto.MessageDTO;
-import com.armoniacode.armoniaskills.entity.*;
+import com.armoniacode.armoniaskills.entity.ChatMessage;
+import com.armoniacode.armoniaskills.entity.ChatRoom;
+import com.armoniacode.armoniaskills.entity.Skill;
+import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;
 import com.armoniacode.armoniaskills.service.SkillService;
@@ -31,7 +34,7 @@ public class ChatController {
     private final SkillService skillService;
 
     // Retrieve messages for a specific chat room
-        @GetMapping("/api/v1/messages/{chatId}")
+    @GetMapping("/api/v1/messages/{chatId}")
     public ResponseEntity<List<MessageDTO>> findChatMessages(@RequestHeader("Authorization") String Authorization, @PathVariable UUID chatId) {
         String token = Authorization.substring(7);
         ChatRoom chatRoom = chatRoomService.findById(chatId);
@@ -77,6 +80,7 @@ public class ChatController {
                     .nombreSkill(skill.getTitle())
                     .ultimoMensaje(Optional.ofNullable(lastMessage).map(ChatMessage::getContent).orElse(null))
                     .ultimaHora(Optional.ofNullable(lastMessage).map(ChatMessage::getDate).orElse(null))
+                    .otroUsuarioId(user.getId())
                     .build());
         }
 

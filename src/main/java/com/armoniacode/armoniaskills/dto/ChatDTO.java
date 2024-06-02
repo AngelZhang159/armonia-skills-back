@@ -16,5 +16,6 @@ public class ChatDTO {
     private Timestamp ultimaHora;
     private String fotoPerfil;
     private String nombreSkill;
+    private UUID otroUsuarioId;
 
 }

@@ -76,7 +76,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void addReview(Review review){
+    public void addReview(Review review) {
         reviewList.add(review);
     }
 }
