@@ -17,4 +17,6 @@ public interface SkillRepository extends JpaRepository<Skill, UUID> {
 
     List<Skill> findAllByTitleContainingOrDescriptionContaining(String query, String query2);
 
+    List<Skill> findAllByCategory(String category);
+
 }

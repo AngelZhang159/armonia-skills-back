@@ -61,4 +61,9 @@ public class SkillController {
     public List<Skill> getSkillsByQuery(@PathVariable("query") String query) {
         return skillService.getSkillsByQuery(query);
     }
+
+    @GetMapping("/category/{category}")
+    public List<Skill> getSkillsByCategory(@PathVariable("category") String category) {
+        return skillService.getSkillsByCategory(category);
+    }
 }

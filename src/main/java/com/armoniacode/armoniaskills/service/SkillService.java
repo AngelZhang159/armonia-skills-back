@@ -53,4 +53,9 @@ public class SkillService {
     public List<Skill> getSkillsByQuery(String query) {
         return skillRepository.findAllByTitleContainingOrDescriptionContaining(query, query);
     }
+
+    public List<Skill> getSkillsByCategory(String category) {
+        return skillRepository.findAllByCategory(category);
+
+    }
 }
