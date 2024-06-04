@@ -56,4 +56,9 @@ public class SkillController {
         skillService.deleteSkill(id);
         return "Skill with id: " + id + " deleted";
     }
+
+    @GetMapping("/search/{query}")
+    public List<Skill> getSkillsByQuery(@PathVariable("query") String query) {
+        return skillService.getSkillsByQuery(query);
+    }
 }

@@ -50,4 +50,7 @@ public class SkillService {
         skillRepository.deleteById(id);
     }
 
+    public List<Skill> getSkillsByQuery(String query) {
+        return skillRepository.findAllByTitleContainingOrDescriptionContaining(query, query);
+    }
 }
