@@ -174,4 +174,23 @@ public class UserController {
     public ResponseEntity<PerfilDTO> getUser(@PathVariable UUID id) {
         return new ResponseEntity<>(userService.getPerfilById(id), HttpStatus.OK);
     }
+
+    @PatchMapping("/user/updateFCMToken")
+    public ResponseEntity<String> updateFCMToken(@RequestHeader String Authorization, @RequestBody String fcmToken) {
+
+        String token = Authorization.substring(7);
+
+        Optional<User> userFromToken = jwtUtil.getUserFromToken(token);
+
+        if (userFromToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User userToUpdate = userFromToken.get();
+        userToUpdate.setFcmToken(fcmToken.replace("\"", ""));
+
+        userService.save(userToUpdate);
+
+        return new ResponseEntity<>("FCM Token updated successfully", HttpStatus.OK);
+    }
 }

@@ -3,10 +3,16 @@ package com.armoniacode.armoniaskills.config;
 import com.armoniacode.armoniaskills.dto.ChatMessageDTO;
 import com.armoniacode.armoniaskills.entity.ChatMessage;
 import com.armoniacode.armoniaskills.entity.ChatRoom;
+import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;
+import com.armoniacode.armoniaskills.service.FCMService;
+import com.armoniacode.armoniaskills.service.UserService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import lombok.RequiredArgsConstructor;
+import okhttp3.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,20 +28,17 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@RequiredArgsConstructor
 public class WebSocketChatHandler extends TextWebSocketHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketChatHandler.class);
 
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
+    private final UserService userService;
+    private final FCMService fcmService;
     private final JWTUtil jwtUtil;
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
-
-    public WebSocketChatHandler(ChatMessageService chatMessageService, ChatRoomService chatRoomService, JWTUtil jwtUtil) {
-        this.chatMessageService = chatMessageService;
-        this.chatRoomService = chatRoomService;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -107,6 +110,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
             recipientSession.sendMessage(textMessage);
         } else {
             logger.warn("Recipient is not connected");
+            sendPushNotification(chatMessage);
         }
 
         String senderId = chatMessage.getSender().toString();
@@ -117,6 +121,25 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
             logger.warn("Sender is not connected");
         }
     }
+
+    private void sendPushNotification(ChatMessage chatMessage) {
+
+        User user = userService.getUserById(chatMessage.getReceiver());
+
+        String userToken = user.getFcmToken();
+
+        if (userToken != null) {
+
+            try {
+                fcmService.sendNotification(userToken, user.getUsername(), chatMessage.getContent());
+            } catch (FirebaseMessagingException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+    }
+
 
     private String getTokenFromSession(WebSocketSession session) {
         List<String> authorizationHeaders = session.getHandshakeHeaders().get("Authorization");

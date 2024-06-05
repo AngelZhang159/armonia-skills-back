@@ -49,6 +49,8 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Review> reviewList;
 
+    private String fcmToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
