@@ -64,6 +64,10 @@ public class SkillController {
 
     @GetMapping("/category/{category}")
     public List<Skill> getSkillsByCategory(@PathVariable("category") String category) {
+
+        if(category.equals("Todas"))
+            return skillService.getSkillList();
+
         return skillService.getSkillsByCategory(category);
     }
 }
