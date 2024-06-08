@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class SkillService {
@@ -54,8 +55,22 @@ public class SkillService {
         return skillRepository.findAllByTitleContainingOrDescriptionContaining(query, query);
     }
 
-    public List<Skill> getSkillsByCategory(String category) {
-        return skillRepository.findAllByCategory(category);
+    public List<Skill> getSkillsByCategoryAndTitle(String category, String query) {
 
+        List<Skill> skillsByCategory = skillRepository.findAllByCategory(category);
+
+        // Filtra los resultados para incluir solo las skills cuyo título contenga la cadena de título proporcionada
+
+        return skillsByCategory.stream()
+                .filter(skill -> skill.getTitle().contains(query))
+                .collect(Collectors.toList());
+    }
+
+
+    public List<Skill> getSkillsByCategory(String category) {
+        System.out.println("Buscando habilidades por categoría: " + category);
+        List<Skill> skills = skillRepository.findAllByCategory(category);
+        System.out.println("Habilidades encontradas: " + skills);
+        return skills;
     }
 }
