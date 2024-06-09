@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequestMapping("/api/v1/skill")
 @RestController
@@ -57,9 +58,35 @@ public class SkillController {
         return "Skill with id: " + id + " deleted";
     }
 
-    @GetMapping("/search/{query}")
-    public List<Skill> getSkillsByQuery(@PathVariable("query") String query) {
-        return skillService.getSkillsByQuery(query);
+    @GetMapping("/category/{category}/search/{query}")
+    public List<Skill> getSkillsByQuery(@PathVariable("category") String category, @PathVariable("query") String query) {
+
+        if (query == null || query.isEmpty()) {
+            System.out.println("Query vacio 🐒🐒🐒");
+        }
+
+        System.out.println("Category: " + category);
+        System.out.println("Query: " + query);
+        if(category.equals("Todas") && query.isEmpty()){
+            System.out.println("Todas y vacio");
+            return skillService.getSkillList();
+        }
+        else if(category.equals("Todas") && !query.isEmpty()){
+            System.out.println("Todas y no vacio");
+            return skillService.getSkillsByQuery(query);
+        }
+        else if(!category.equals("Todas") && query.isEmpty()){
+            System.out.println("No todas y vacio");
+            return skillService.getSkillsByCategory(category);
+        }
+        else if(!category.equals("Todas") && !query.isEmpty()){
+            System.out.println("No todas y no vacio");
+            List<Skill> skillsByCategory = skillService.getSkillsByCategory(category);
+            return skillsByCategory.stream()
+                    .filter(skill -> skill.getTitle().contains(query))
+                    .collect(Collectors.toList());
+        }
+        return skillService.getSkillList();
     }
 
     @GetMapping("/category/{category}")
