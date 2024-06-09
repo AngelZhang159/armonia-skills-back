@@ -25,8 +25,7 @@ public class SkillService {
     }
 
     public Skill getSkillById(UUID id) {
-        Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("The skill with id: " + id + " doesn't exist"));
-        return skill;
+        return skillRepository.findById(id).orElse(null);
     }
 
     public Skill updateSkillById(UUID id, Skill skillUpdated) {

@@ -71,6 +71,8 @@ public class ChatController {
                 user = userService.getUserById(chatRoom.getSenderId());
             }
             Skill skill = skillService.getSkillById(chatRoom.getSkill());
+            if (user == null || skill == null) continue;
+
             ChatMessage lastMessage = chatMessageService.findLastMessage(chatRoom.getId());
 
             chatDTOs.add(ChatDTO.builder()
