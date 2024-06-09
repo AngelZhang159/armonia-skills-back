@@ -3,11 +3,12 @@ package com.armoniacode.armoniaskills.service;
 import com.armoniacode.armoniaskills.dto.PerfilDTO;
 import com.armoniacode.armoniaskills.entity.Review;
 import com.armoniacode.armoniaskills.entity.Skill;
-import com.armoniacode.armoniaskills.entity.Status;
+import com.armoniacode.armoniaskills.entity.StatusEnum;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.repository.SkillRepository;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import com.armoniacode.armoniaskills.util.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -18,17 +19,12 @@ import java.util.UUID;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
-
-    public UserService(JWTUtil jwtUtil, UserRepository userRepository, SkillRepository skillRepository) {
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        this.skillRepository = skillRepository;
-    }
 
     public String registerUser(User user) {
         String password = user.getPassword();
@@ -84,7 +80,7 @@ public class UserService {
     }
 
     public void save(User userToUpdate) {
-        userToUpdate.setStatus(Status.ONLINE);
+        userToUpdate.setStatus(StatusEnum.ONLINE);
         userRepository.save(userToUpdate);
     }
 
@@ -92,13 +88,13 @@ public class UserService {
         User user = userRepository.findById(userToUpdate.getId()).orElse(null);
 
         if (user != null) {
-            user.setStatus(Status.OFFLINE);
+            user.setStatus(StatusEnum.OFFLINE);
             userRepository.save(user);
         }
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findByStatus(Status.ONLINE);
+        return userRepository.findByStatus(StatusEnum.ONLINE);
     }
 
     public User getUserById(UUID id) {

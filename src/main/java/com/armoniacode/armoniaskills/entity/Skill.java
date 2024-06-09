@@ -1,5 +1,7 @@
 package com.armoniacode.armoniaskills.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,4 +43,12 @@ public class Skill {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> imageList;
 
+    @OneToMany(mappedBy = "skill")
+    @JsonBackReference
+    private List<CompraVenta> compraVentaList;
+
+    @Override
+    public String toString() {
+        return "Skill{}";
+    }
 }

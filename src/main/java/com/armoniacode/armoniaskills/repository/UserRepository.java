@@ -1,6 +1,6 @@
 package com.armoniacode.armoniaskills.repository;
 
-import com.armoniacode.armoniaskills.entity.Status;
+import com.armoniacode.armoniaskills.entity.StatusEnum;
 import com.armoniacode.armoniaskills.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -18,5 +18,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findByUsername(String username);
 
-    List<User> findByStatus(Status status);
+    List<User> findByStatus(StatusEnum status);
 }

@@ -1,5 +1,7 @@
 package com.armoniacode.armoniaskills.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private Status status;
+    private StatusEnum status;
 
     @Column(nullable = false)
     private double balance;
@@ -50,6 +52,14 @@ public class User implements UserDetails {
     private List<Review> reviewList;
 
     private String fcmToken;
+
+    @OneToMany(mappedBy = "userSeller")
+    @JsonBackReference
+    private List<CompraVenta> ventaList;
+
+    @OneToMany(mappedBy = "userBuyer")
+    @JsonBackReference
+    private List<CompraVenta> compraList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -80,5 +90,10 @@ public class User implements UserDetails {
 
     public void addReview(Review review) {
         reviewList.add(review);
+    }
+
+    @Override
+    public String toString() {
+        return "User{}";
     }
 }

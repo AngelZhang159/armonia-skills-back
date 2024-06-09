@@ -1,5 +1,5 @@
 package com.armoniacode.armoniaskills.entity;
 
-public enum Status {
+public enum StatusEnum {
     ONLINE, OFFLINE
 }

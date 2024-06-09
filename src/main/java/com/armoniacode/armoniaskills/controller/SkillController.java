@@ -3,6 +3,7 @@ package com.armoniacode.armoniaskills.controller;
 import com.armoniacode.armoniaskills.entity.Skill;
 import com.armoniacode.armoniaskills.service.SkillService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +16,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/skill")
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class SkillController {
 
     private final SkillService skillService;
     private final JWTUtil jwtUtil;
-
-    public SkillController(SkillService skillService, JWTUtil jwtUtil) {
-        this.skillService = skillService;
-        this.jwtUtil = jwtUtil;
-    }
 
     @GetMapping
     public List<Skill> getSkills() {
@@ -62,25 +59,25 @@ public class SkillController {
     public List<Skill> getSkillsByQuery(@PathVariable("category") String category, @PathVariable("query") String query) {
 
         if (query == null || query.isEmpty()) {
-            System.out.println("Query vacio 🐒🐒🐒");
+            log.info("Query vacio 🐒🐒🐒");
         }
 
-        System.out.println("Category: " + category);
-        System.out.println("Query: " + query);
+        log.info("Category: {}", category);
+        log.info("Query: {}", query);
         if(category.equals("Todas") && query.isEmpty()){
-            System.out.println("Todas y vacio");
+            log.info("Todas y vacio");
             return skillService.getSkillList();
         }
         else if(category.equals("Todas") && !query.isEmpty()){
-            System.out.println("Todas y no vacio");
+            log.info("Todas y no vacio");
             return skillService.getSkillsByQuery(query);
         }
         else if(!category.equals("Todas") && query.isEmpty()){
-            System.out.println("No todas y vacio");
+            log.info("No todas y vacio");
             return skillService.getSkillsByCategory(category);
         }
         else if(!category.equals("Todas") && !query.isEmpty()){
-            System.out.println("No todas y no vacio");
+            log.info("No todas y no vacio");
             List<Skill> skillsByCategory = skillService.getSkillsByCategory(category);
             return skillsByCategory.stream()
                     .filter(skill -> skill.getTitle().contains(query))
