@@ -55,35 +55,40 @@ public class SkillController {
         return "Skill with id: " + id + " deleted";
     }
 
-    @GetMapping("/category/{category}/search/{query}")
-    public List<Skill> getSkillsByQuery(@PathVariable("category") String category, @PathVariable("query") String query) {
+    @GetMapping("/category/{category}/search/{query}/price/{priceRange}")
+    public List<Skill> getSkillsByQuery(@PathVariable("category") String category, @PathVariable("query") String query, @PathVariable("priceRange") String priceRange){
 
-        if (query == null || query.isEmpty()) {
-            log.info("Query vacio 🐒🐒🐒");
+
+        List<Skill> skills;
+
+        // Paso 1: Obtén todas las habilidades que coincidan con la categoría proporcionada
+        if(category.equals("Todas")) {
+            skills = skillService.getSkillList();
+        } else {
+            skills = skillService.getSkillsByCategory(category);
         }
 
-        log.info("Category: {}", category);
-        log.info("Query: {}", query);
-        if(category.equals("Todas") && query.isEmpty()){
-            log.info("Todas y vacio");
-            return skillService.getSkillList();
-        }
-        else if(category.equals("Todas") && !query.isEmpty()){
-            log.info("Todas y no vacio");
-            return skillService.getSkillsByQuery(query);
-        }
-        else if(!category.equals("Todas") && query.isEmpty()){
-            log.info("No todas y vacio");
-            return skillService.getSkillsByCategory(category);
-        }
-        else if(!category.equals("Todas") && !query.isEmpty()){
-            log.info("No todas y no vacio");
-            List<Skill> skillsByCategory = skillService.getSkillsByCategory(category);
-            return skillsByCategory.stream()
+        // Paso 2: Si la consulta no está vacía, filtra las habilidades para incluir solo aquellas cuyo título contenga la consulta
+        if(!query.equals("default_query")) {
+            skills = skills.stream()
                     .filter(skill -> skill.getTitle().contains(query))
                     .collect(Collectors.toList());
         }
-        return skillService.getSkillList();
+
+        // Paso 3: Si el rango de precio no está vacío, filtra las habilidades para incluir solo aquellas cuyo precio esté dentro del rango de precio
+
+        if(!priceRange.equals("Todos")) {
+            // Precio mínimo y máximo del rango seleccionado
+            String[] precios = priceRange.split("-");
+            int minPrice = Integer.parseInt(precios[0]);
+            int maxPrice = Integer.parseInt(precios[1]);
+            skills = skills.stream()
+                    .filter(skill -> skill.getPrice() >= minPrice && skill.getPrice() <= maxPrice)
+                    .collect(Collectors.toList());
+        }
+
+        System.out.println("🐒🐒🐒🐒🐒👹👹👹👹🥶🥶🥶🥶 Habilidades encontradas: " + skills);
+        return skills;
     }
 
     @GetMapping("/category/{category}")

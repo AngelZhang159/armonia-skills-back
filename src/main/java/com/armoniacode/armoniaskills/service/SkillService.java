@@ -31,12 +31,13 @@ public class SkillService {
 
     public Skill updateSkillById(UUID id, Skill skillUpdated) {
         Skill skill = skillRepository.findById(id).orElseThrow(() -> new RuntimeException("The skill with id: " + id + " doesn't exist"));
-
+        System.out.println("🐒🐒🐒🐒🐒🐒🐒 " + skill.toString());
+        System.out.println("🐒🐒🐒🐒🐒🐒🐒 " + skillUpdated.toString());
         skill = Skill.builder()
                 .id(skill.getId())
                 .title(skillUpdated.getTitle() != null ? skillUpdated.getTitle() : skill.getTitle())
                 .description(skillUpdated.getDescription() != null ? skillUpdated.getDescription() : skill.getDescription())
-                .category(skillUpdated.getCategory() != null ? skillUpdated.getDescription() : skill.getDescription())
+                .category(skillUpdated.getCategory() != null ? skillUpdated.getCategory() : skill.getCategory())
                 .price(skillUpdated.getPrice() != null ? skillUpdated.getPrice() : skill.getPrice())
                 .location(skillUpdated.getPrice() != null ? skillUpdated.getLocation() : skill.getLocation())
                 .userID(skill.getUserID())
@@ -50,7 +51,7 @@ public class SkillService {
         skillRepository.deleteById(id);
     }
 
-    public List<Skill> getSkillsByQuery(String query) {
+    /*public List<Skill> getSkillsByQuery(String query) {
         return skillRepository.findAllByTitleContainingOrDescriptionContaining(query, query);
     }
 
@@ -63,7 +64,7 @@ public class SkillService {
         return skillsByCategory.stream()
                 .filter(skill -> skill.getTitle().contains(query))
                 .collect(Collectors.toList());
-    }
+    }*/
 
 
     public List<Skill> getSkillsByCategory(String category) {
@@ -72,4 +73,8 @@ public class SkillService {
         System.out.println("Habilidades encontradas: " + skills);
         return skills;
     }
+
+    /*public List<Skill> getSkillsByPriceRange(Double minPrice, Double maxPrice) {
+        return skillRepository.findAllByPriceBetween(minPrice, maxPrice);
+    }*/
 }
