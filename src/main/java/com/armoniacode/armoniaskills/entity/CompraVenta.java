@@ -1,6 +1,8 @@
 package com.armoniacode.armoniaskills.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,12 +25,12 @@ public class CompraVenta {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
-    @JsonBackReference
+    @JsonIdentityReference(alwaysAsId = true)
     private User userSeller;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
-    @JsonBackReference
+    @JsonIdentityReference(alwaysAsId = true)
     private User userBuyer;
 
 //  Pendiente al momento de la compra

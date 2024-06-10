@@ -61,22 +61,21 @@ public class SkillController {
 
         List<Skill> skills;
 
-        // Paso 1: Obtén todas las habilidades que coincidan con la categoría proporcionada
+        // Paso 1: Obtiene todas las skills que coincidan con la categoría proporcionada
         if(category.equals("Todas")) {
             skills = skillService.getSkillList();
         } else {
             skills = skillService.getSkillsByCategory(category);
         }
 
-        // Paso 2: Si la consulta no está vacía, filtra las habilidades para incluir solo aquellas cuyo título contenga la consulta
-        if(!query.equals("default_query")) {
+        // Paso 2: Si la consulta no está vacía, filtra las skills para incluir solo aquellas cuyo título contenga la consulta
+        if(!query.equals("defaultQuery")) {
             skills = skills.stream()
                     .filter(skill -> skill.getTitle().contains(query))
                     .collect(Collectors.toList());
         }
 
-        // Paso 3: Si el rango de precio no está vacío, filtra las habilidades para incluir solo aquellas cuyo precio esté dentro del rango de precio
-
+        // Paso 3: Si el rango de precio no está vacío, filtra las skills para incluir solo aquellas cuyo precio esté dentro del rango de precio
         if(!priceRange.equals("Todos")) {
             // Precio mínimo y máximo del rango seleccionado
             String[] precios = priceRange.split("-");
