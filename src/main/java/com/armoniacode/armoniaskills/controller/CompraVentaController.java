@@ -1,6 +1,7 @@
 package com.armoniacode.armoniaskills.controller;
 
 import com.armoniacode.armoniaskills.dto.ComprasVentasDTO;
+import com.armoniacode.armoniaskills.entity.StatusCompraEnum;
 import com.armoniacode.armoniaskills.service.CompraVentaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,16 @@ public class CompraVentaController {
     @PostMapping("/comprar/{idSkill}")
     public ResponseEntity<String> comprar(@RequestHeader("Authorization") String token, @PathVariable UUID idSkill) {
         return comprasVentasService.comprar(token, idSkill);
+    }
+
+    @PatchMapping("/modificarVenta/{idVenta}/{status}")
+    public ResponseEntity<String> modificarVenta(@RequestHeader("Authorization") String token, @PathVariable UUID idVenta, @PathVariable StatusCompraEnum status) {
+        return comprasVentasService.modificarVenta(token, idVenta, status);
+    }
+
+    @GetMapping("/compraVenta/{idVenta}")
+    public ResponseEntity<ComprasVentasDTO> getCompraVenta(@RequestHeader("Authorization") String token, @PathVariable UUID idVenta) {
+        return comprasVentasService.getCompraVenta(token, idVenta);
     }
 
 }

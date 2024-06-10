@@ -3,6 +3,7 @@ package com.armoniacode.armoniaskills.service;
 import com.armoniacode.armoniaskills.dto.ComprasVentasDTO;
 import com.armoniacode.armoniaskills.entity.CompraVenta;
 import com.armoniacode.armoniaskills.entity.Skill;
+import com.armoniacode.armoniaskills.entity.StatusCompraEnum;
 import com.armoniacode.armoniaskills.entity.User;
 import com.armoniacode.armoniaskills.repository.CompraVentaRepository;
 import com.armoniacode.armoniaskills.repository.UserRepository;
@@ -96,5 +97,51 @@ public class CompraVentaService {
         } else {
             return ResponseEntity.badRequest().body("Saldo insuficiente");
         }
+    }
+
+    public ResponseEntity<String> modificarVenta(String token, UUID idVenta, StatusCompraEnum status) {
+
+            token = token.substring(7);
+
+            Optional<User> user = jwtUtil.getUserFromToken(token);
+
+            if (user.isPresent()) {
+                Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
+
+                if (compraVenta.isPresent()) {
+                    CompraVenta compraVentaUpdate = compraVenta.get();
+                    if (compraVentaUpdate.getUserSellerId().equals(String.valueOf(user.get().getId()))) {
+
+                        compraVentaUpdate.setStatus(status);
+                        compraVentaRepository.save(compraVentaUpdate);
+                        return ResponseEntity.ok("Venta modificada con éxito");
+                    } else {
+                        return ResponseEntity.badRequest().body("No tienes permisos para modificar esta venta");
+                    }
+                } else {
+                    return ResponseEntity.badRequest().body("Venta no encontrada");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Usuario no encontrado");
+            }
+    }
+
+    public ResponseEntity<ComprasVentasDTO> getCompraVenta(String token, UUID idVenta) {
+
+            token = token.substring(7);
+            Optional<User> user = jwtUtil.getUserFromToken(token);
+
+            if (user.isPresent()) {
+                Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
+
+                if (compraVenta.isPresent()) {
+                    Optional<User> userSeller = userRepository.findById(UUID.fromString(compraVenta.get().getUserSellerId()));
+                    return ResponseEntity.ok(getComprasVentasDTO(compraVenta.get(), userSeller));
+                } else {
+                    return ResponseEntity.ok(null);
+                }
+            } else {
+                return ResponseEntity.ok(null);
+            }
     }
 }
