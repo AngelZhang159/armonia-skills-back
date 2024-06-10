@@ -62,7 +62,7 @@ public class SkillController {
         List<Skill> skills;
 
         // Paso 1: Obtiene todas las skills que coincidan con la categoría proporcionada
-        if(category.equals("Todas")) {
+        if(category.equals("Todas") || category.equals("All")) {
             skills = skillService.getSkillList();
         } else {
             skills = skillService.getSkillsByCategory(category);
@@ -76,7 +76,9 @@ public class SkillController {
         }
 
         // Paso 3: Si el rango de precio no está vacío, filtra las skills para incluir solo aquellas cuyo precio esté dentro del rango de precio
-        if(!priceRange.equals("Todos")) {
+        if(priceRange.equals("Todos") || priceRange.equals("All")) {
+            // No se aplica ningún filtro
+        } else {
             // Precio mínimo y máximo del rango seleccionado
             String[] precios = priceRange.split("-");
             int minPrice = Integer.parseInt(precios[0]);
