@@ -18,20 +18,20 @@ public class CompraVenta {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
-    @JsonBackReference
-    private Skill skill;
+//    @ManyToOne
+//    @JoinColumn(referencedColumnName = "id")
+//    @JsonBackReference
+    private String skillId;
 
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
-    @JsonIdentityReference(alwaysAsId = true)
-    private User userSeller;
+//    @ManyToOne
+//    @JoinColumn(referencedColumnName = "id")
+//    @JsonIdentityReference(alwaysAsId = true)
+    private String userSellerId;
 
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "id")
-    @JsonIdentityReference(alwaysAsId = true)
-    private User userBuyer;
+//    @ManyToOne
+//    @JoinColumn(referencedColumnName = "id")
+//    @JsonIdentityReference(alwaysAsId = true)
+    private String userBuyerId;
 
 //  Pendiente al momento de la compra
     @Enumerated(EnumType.STRING)
@@ -40,8 +40,4 @@ public class CompraVenta {
     @CreationTimestamp
     private Timestamp date;
 
-    @Override
-    public String toString() {
-        return "CompraVenta{}";
-    }
 }

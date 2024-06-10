@@ -42,8 +42,8 @@ public class Skill {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> imageList;
 
-    @OneToMany(mappedBy = "skill")
-    @JsonBackReference
+    @OneToMany
+//    @JsonBackReference
     private List<CompraVenta> compraVentaList;
 
     @Override

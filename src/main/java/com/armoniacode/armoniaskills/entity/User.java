@@ -53,11 +53,11 @@ public class User implements UserDetails {
 
     private String fcmToken;
 
-    @OneToMany(mappedBy = "userSeller")
+    @OneToMany
     //@JsonBackReference(value="user-seller")
     private List<CompraVenta> ventaList;
 
-    @OneToMany(mappedBy = "userBuyer")
+    @OneToMany
     //@JsonBackReference(value="user-buyer")
     private List<CompraVenta> compraList;
 
