@@ -33,9 +33,9 @@ public class CompraVentaService {
         Optional<User> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
-            List<CompraVenta> compras = user.get().getCompraList();
+            List<CompraVenta> compras = compraVentaRepository.getComprasByUserBuyerId(String.valueOf(user.get().getId()));
             return ResponseEntity.ok(compras.stream().map(compra -> {
-                Optional<User> userSeller = jwtUtil.getUserFromToken(compra.getUserSellerId());
+                Optional<User> userSeller = userRepository.findById(UUID.fromString(compra.getUserSellerId()));
                 return getComprasVentasDTO(compra, userSeller);
             }).toList());
         } else {
@@ -49,9 +49,9 @@ public class CompraVentaService {
         Optional<User> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
-            List<CompraVenta> ventas = user.get().getVentaList();
+            List<CompraVenta> ventas = compraVentaRepository.getVentasByUserSellerId(String.valueOf(user.get().getId()));
             return ResponseEntity.ok(ventas.stream().map(venta -> {
-                Optional<User> userBuyer = jwtUtil.getUserFromToken(venta.getUserBuyerId());
+                Optional<User> userBuyer = userRepository.findById(UUID.fromString(venta.getUserBuyerId()));
                 return getComprasVentasDTO(venta, userBuyer);
             }).toList());
         } else {
@@ -70,7 +70,7 @@ public class CompraVentaService {
         comprasVentasDTO.setSkillName(skill.getTitle());
         comprasVentasDTO.setDate(venta.getDate());
         comprasVentasDTO.setStatus(venta.getStatus());
-        comprasVentasDTO.setSkillID(skill.getId());
+        comprasVentasDTO.setSkillId(skill.getId());
         return comprasVentasDTO;
     }
 

@@ -21,6 +21,6 @@ public class ComprasVentasDTO {
     private String skillName;
     private Timestamp date;
     private StatusCompraEnum status;
-    private UUID skillID;
+    private UUID skillId;
 
 }

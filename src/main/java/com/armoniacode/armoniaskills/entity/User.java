@@ -91,9 +91,4 @@ public class User implements UserDetails {
     public void addReview(Review review) {
         reviewList.add(review);
     }
-
-    @Override
-    public String toString() {
-        return "User{}";
-    }
 }
