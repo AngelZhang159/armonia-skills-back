@@ -1,5 +1,5 @@
 package com.armoniacode.armoniaskills.entity;
 
 public enum StatusCompraEnum {
-    PENDIENTE, ACEPTADO, RECHAZADO, COMPLETADO
+    PENDIENTE, ACEPTADO, RECHAZADO, ENVIADO, COMPLETADO
 }
