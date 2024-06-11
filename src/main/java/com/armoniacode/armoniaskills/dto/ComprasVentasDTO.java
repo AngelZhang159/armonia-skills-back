@@ -22,5 +22,6 @@ public class ComprasVentasDTO {
     private Timestamp date;
     private StatusCompraEnum status;
     private UUID skillId;
+    private double price;
 
 }

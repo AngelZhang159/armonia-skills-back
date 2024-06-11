@@ -72,6 +72,7 @@ public class CompraVentaService {
         comprasVentasDTO.setDate(venta.getDate());
         comprasVentasDTO.setStatus(venta.getStatus());
         comprasVentasDTO.setSkillId(skill.getId());
+        comprasVentasDTO.setPrice(venta.getPrice());
         return comprasVentasDTO;
     }
 
@@ -89,6 +90,7 @@ public class CompraVentaService {
             compraVenta.setUserBuyerId(String.valueOf(userBuyer.getId()));
             compraVenta.setUserSellerId(String.valueOf(userSeller.getId()));
             compraVenta.setSkillId(String.valueOf(skill.getId()));
+            compraVenta.setPrice(skill.getPrice());
             userBuyer.setBalance(userBuyer.getBalance() - skill.getPrice());
 
             compraVentaRepository.save(compraVenta);
@@ -101,47 +103,58 @@ public class CompraVentaService {
 
     public ResponseEntity<String> modificarVenta(String token, UUID idVenta, StatusCompraEnum status) {
 
-            token = token.substring(7);
+        token = token.substring(7);
 
-            Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<User> user = jwtUtil.getUserFromToken(token);
 
-            if (user.isPresent()) {
-                Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
+        if (user.isPresent()) {
+            Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
 
-                if (compraVenta.isPresent()) {
-                    CompraVenta compraVentaUpdate = compraVenta.get();
-                    if (compraVentaUpdate.getUserSellerId().equals(String.valueOf(user.get().getId()))) {
+            if (compraVenta.isPresent()) {
+                CompraVenta compraVentaUpdate = compraVenta.get();
+                if (compraVentaUpdate.getUserSellerId().equals(String.valueOf(user.get().getId()))) {
 
-                        compraVentaUpdate.setStatus(status);
-                        compraVentaRepository.save(compraVentaUpdate);
-                        return ResponseEntity.ok("Venta modificada con éxito");
-                    } else {
-                        return ResponseEntity.badRequest().body("No tienes permisos para modificar esta venta");
-                    }
+                    compraVentaUpdate.setStatus(status);
+                    compraVentaRepository.save(compraVentaUpdate);
+
+
+                    return ResponseEntity.ok("Venta modificada con éxito");
+                } else if (status.equals(StatusCompraEnum.COMPLETADO) && compraVentaUpdate.getUserBuyerId().equals(String.valueOf(user.get().getId()))) {
+                    User userBuyer = userRepository.findById(UUID.fromString(compraVentaUpdate.getUserSellerId())).get();
+
+                    compraVentaUpdate.setStatus(status);
+                    compraVentaRepository.save(compraVentaUpdate);
+
+                    userBuyer.setBalance(userBuyer.getBalance() + compraVenta.get().getPrice());
+                    userRepository.save(userBuyer);
+                    return ResponseEntity.ok("Venta modificada con éxito");
                 } else {
-                    return ResponseEntity.badRequest().body("Venta no encontrada");
+                    return ResponseEntity.badRequest().body("Usuario no autorizado");
                 }
             } else {
-                return ResponseEntity.badRequest().body("Usuario no encontrado");
+                return ResponseEntity.badRequest().body("Venta no encontrada");
             }
+        } else {
+            return ResponseEntity.badRequest().body("Usuario no encontrado");
+        }
     }
 
     public ResponseEntity<ComprasVentasDTO> getCompraVenta(String token, UUID idVenta) {
 
-            token = token.substring(7);
-            Optional<User> user = jwtUtil.getUserFromToken(token);
+        token = token.substring(7);
+        Optional<User> user = jwtUtil.getUserFromToken(token);
 
-            if (user.isPresent()) {
-                Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
+        if (user.isPresent()) {
+            Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
 
-                if (compraVenta.isPresent()) {
-                    Optional<User> userSeller = userRepository.findById(UUID.fromString(compraVenta.get().getUserSellerId()));
-                    return ResponseEntity.ok(getComprasVentasDTO(compraVenta.get(), userSeller));
-                } else {
-                    return ResponseEntity.ok(null);
-                }
+            if (compraVenta.isPresent()) {
+                Optional<User> userSeller = userRepository.findById(UUID.fromString(compraVenta.get().getUserSellerId()));
+                return ResponseEntity.ok(getComprasVentasDTO(compraVenta.get(), userSeller));
             } else {
                 return ResponseEntity.ok(null);
             }
+        } else {
+            return ResponseEntity.ok(null);
+        }
     }
 }

@@ -40,4 +40,6 @@ public class CompraVenta {
     @CreationTimestamp
     private Timestamp date;
 
+    private double price;
+
 }
