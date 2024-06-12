@@ -34,7 +34,7 @@ public class CompraVentaService {
         Optional<User> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
-            List<CompraVenta> compras = compraVentaRepository.getComprasByUserBuyerId(String.valueOf(user.get().getId()));
+            List<CompraVenta> compras = compraVentaRepository.getComprasByUserBuyerIdOrderByDate(String.valueOf(user.get().getId()));
             return ResponseEntity.ok(compras.stream().map(compra -> {
                 Optional<User> userSeller = userRepository.findById(UUID.fromString(compra.getUserSellerId()));
                 return getComprasVentasDTO(compra, userSeller);
@@ -50,7 +50,7 @@ public class CompraVentaService {
         Optional<User> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
-            List<CompraVenta> ventas = compraVentaRepository.getVentasByUserSellerId(String.valueOf(user.get().getId()));
+            List<CompraVenta> ventas = compraVentaRepository.getVentasByUserSellerIdOrderByDate(String.valueOf(user.get().getId()));
             return ResponseEntity.ok(ventas.stream().map(venta -> {
                 Optional<User> userBuyer = userRepository.findById(UUID.fromString(venta.getUserBuyerId()));
                 return getComprasVentasDTO(venta, userBuyer);
