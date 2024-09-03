@@ -48,7 +48,7 @@ spring.datasource.password=<mysql-password>
 
 Para desplegar la aplicación en un servidor, sigue estos pasos:
 
-1. Realiza el build del proyecto para generar el archivo `.jar`:
+1. Descarga el archivo `.jar` en el apartado de "Releases" o realiza el build del proyecto para generar el archivo `.jar`:
    ```shell
    mvn clean package
    ```
