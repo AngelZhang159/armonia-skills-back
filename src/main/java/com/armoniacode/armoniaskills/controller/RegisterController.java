@@ -1,6 +1,6 @@
 package com.armoniacode.armoniaskills.controller;
 
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class RegisterController {
     }
 
     @PostMapping("/user/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<String> registerUser(@RequestBody Users user) {
         try {
             String response = userService.registerUser(user);
             return new ResponseEntity<>(response, HttpStatus.CREATED);

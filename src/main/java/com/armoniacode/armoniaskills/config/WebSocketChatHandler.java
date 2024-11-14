@@ -3,7 +3,7 @@ package com.armoniacode.armoniaskills.config;
 import com.armoniacode.armoniaskills.dto.ChatMessageDTO;
 import com.armoniacode.armoniaskills.entity.ChatMessage;
 import com.armoniacode.armoniaskills.entity.ChatRoom;
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;
 import com.armoniacode.armoniaskills.service.FCMService;
@@ -12,7 +12,6 @@ import com.armoniacode.armoniaskills.util.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
-import okhttp3.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +123,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     private void sendPushNotification(ChatMessage chatMessage) {
 
-        User user = userService.getUserById(chatMessage.getReceiver());
+        Users user = userService.getUserById(chatMessage.getReceiver());
 
         String userToken = user.getFcmToken();
 

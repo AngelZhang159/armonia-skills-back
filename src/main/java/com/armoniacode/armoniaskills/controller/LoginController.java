@@ -1,6 +1,6 @@
 package com.armoniacode.armoniaskills.controller;
 
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +20,7 @@ public class LoginController {
     }
 
     @PostMapping("/user/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user) {
+    public ResponseEntity<String> loginUser(@RequestBody Users user) {
         try {
             HttpHeaders responseHeaders = userService.loginUser(user);
             return new ResponseEntity<>("User logged in successfully", responseHeaders, HttpStatus.OK);

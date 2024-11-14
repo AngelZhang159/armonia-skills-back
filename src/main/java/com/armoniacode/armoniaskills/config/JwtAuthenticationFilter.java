@@ -1,6 +1,6 @@
 package com.armoniacode.armoniaskills.config;
 
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,9 +30,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.split(" ")[1].trim();
             if (jwtUtil.validateToken(token)) {
-                Optional<User> optionalUser = jwtUtil.getUserFromToken(token);
+                Optional<Users> optionalUser = jwtUtil.getUserFromToken(token);
                 if (optionalUser.isPresent()) {
-                    User user = optionalUser.get();
+                    Users user = optionalUser.get();
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                             user.getUsername(), null, user.getAuthorities()
                     );

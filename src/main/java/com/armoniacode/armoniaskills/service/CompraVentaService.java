@@ -4,7 +4,7 @@ import com.armoniacode.armoniaskills.dto.ComprasVentasDTO;
 import com.armoniacode.armoniaskills.entity.CompraVenta;
 import com.armoniacode.armoniaskills.entity.Skill;
 import com.armoniacode.armoniaskills.entity.StatusCompraEnum;
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.repository.CompraVentaRepository;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import com.armoniacode.armoniaskills.util.JWTUtil;
@@ -31,12 +31,12 @@ public class CompraVentaService {
     public ResponseEntity<List<ComprasVentasDTO>> getCompras(String token) {
 
         token = token.substring(7);
-        Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<Users> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
             List<CompraVenta> compras = compraVentaRepository.getComprasByUserBuyerIdOrderByDate(String.valueOf(user.get().getId()));
             return ResponseEntity.ok(compras.stream().map(compra -> {
-                Optional<User> userSeller = userRepository.findById(UUID.fromString(compra.getUserSellerId()));
+                Optional<Users> userSeller = userRepository.findById(UUID.fromString(compra.getUserSellerId()));
                 return getComprasVentasDTO(compra, userSeller);
             }).toList());
         } else {
@@ -47,12 +47,12 @@ public class CompraVentaService {
     public ResponseEntity<List<ComprasVentasDTO>> getVentas(String token) {
 
         token = token.substring(7);
-        Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<Users> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
             List<CompraVenta> ventas = compraVentaRepository.getVentasByUserSellerIdOrderByDate(String.valueOf(user.get().getId()));
             return ResponseEntity.ok(ventas.stream().map(venta -> {
-                Optional<User> userBuyer = userRepository.findById(UUID.fromString(venta.getUserBuyerId()));
+                Optional<Users> userBuyer = userRepository.findById(UUID.fromString(venta.getUserBuyerId()));
                 return getComprasVentasDTO(venta, userBuyer);
             }).toList());
         } else {
@@ -61,7 +61,7 @@ public class CompraVentaService {
     }
 
     @NotNull
-    private ComprasVentasDTO getComprasVentasDTO(CompraVenta venta, Optional<User> userBuyer) {
+    private ComprasVentasDTO getComprasVentasDTO(CompraVenta venta, Optional<Users> userBuyer) {
         Skill skill = skillService.getSkillById(UUID.fromString(venta.getSkillId()));
 
         ComprasVentasDTO comprasVentasDTO = new ComprasVentasDTO();
@@ -82,8 +82,8 @@ public class CompraVentaService {
 
         Skill skill = skillService.getSkillById(idSkill);
 
-        User userBuyer = jwtUtil.getUserFromToken(token).get();
-        User userSeller = userRepository.findById(skill.getUserID()).get();
+        Users userBuyer = jwtUtil.getUserFromToken(token).get();
+        Users userSeller = userRepository.findById(skill.getUserID()).get();
 
         if (!(userBuyer.getBalance() < skill.getPrice())) {
             CompraVenta compraVenta = new CompraVenta();
@@ -105,7 +105,7 @@ public class CompraVentaService {
 
         token = token.substring(7);
 
-        Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<Users> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
             Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
@@ -120,7 +120,7 @@ public class CompraVentaService {
 
                     return ResponseEntity.ok("Venta modificada con éxito");
                 } else if (status.equals(StatusCompraEnum.COMPLETADO) && compraVentaUpdate.getUserBuyerId().equals(String.valueOf(user.get().getId()))) {
-                    User userBuyer = userRepository.findById(UUID.fromString(compraVentaUpdate.getUserSellerId())).get();
+                    Users userBuyer = userRepository.findById(UUID.fromString(compraVentaUpdate.getUserSellerId())).get();
 
                     compraVentaUpdate.setStatus(status);
                     compraVentaRepository.save(compraVentaUpdate);
@@ -142,13 +142,13 @@ public class CompraVentaService {
     public ResponseEntity<ComprasVentasDTO> getCompraVenta(String token, UUID idVenta) {
 
         token = token.substring(7);
-        Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<Users> user = jwtUtil.getUserFromToken(token);
 
         if (user.isPresent()) {
             Optional<CompraVenta> compraVenta = compraVentaRepository.findById(idVenta);
 
             if (compraVenta.isPresent()) {
-                Optional<User> userSeller = userRepository.findById(UUID.fromString(compraVenta.get().getUserSellerId()));
+                Optional<Users> userSeller = userRepository.findById(UUID.fromString(compraVenta.get().getUserSellerId()));
                 return ResponseEntity.ok(getComprasVentasDTO(compraVenta.get(), userSeller));
             } else {
                 return ResponseEntity.ok(null);

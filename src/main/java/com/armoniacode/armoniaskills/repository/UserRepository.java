@@ -1,7 +1,7 @@
 package com.armoniacode.armoniaskills.repository;
 
 import com.armoniacode.armoniaskills.entity.StatusEnum;
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,13 +10,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<Users, Integer> {
 
-    User findByEmail(String email);
+    Users findByEmail(String email);
 
-    Optional<User> findById(UUID uuid);
+    Optional<Users> findById(UUID uuid);
 
-    User findByUsername(String username);
+    Users findByUsername(String username);
 
-    List<User> findByStatus(StatusEnum status);
+    List<Users> findByStatus(StatusEnum status);
 }

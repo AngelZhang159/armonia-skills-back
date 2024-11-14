@@ -4,7 +4,7 @@ import com.armoniacode.armoniaskills.dto.PerfilDTO;
 import com.armoniacode.armoniaskills.entity.Review;
 import com.armoniacode.armoniaskills.entity.Skill;
 import com.armoniacode.armoniaskills.entity.StatusEnum;
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.repository.SkillRepository;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import com.armoniacode.armoniaskills.util.JWTUtil;
@@ -26,7 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
 
-    public String registerUser(User user) {
+    public String registerUser(Users user) {
         String password = user.getPassword();
 
         String encriptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
@@ -35,7 +35,7 @@ public class UserService {
 
         user.setRoles(Collections.singleton("USER"));
 
-        User existingUser = userRepository.findByUsername(user.getUsername());
+        Users existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser != null) {
             throw new RuntimeException("Username already exists");
         }
@@ -47,8 +47,8 @@ public class UserService {
         return "User registered";
     }
 
-    public HttpHeaders loginUser(User user) {
-        User loggedInUser = userRepository.findByEmail(user.getEmail());
+    public HttpHeaders loginUser(Users user) {
+        Users loggedInUser = userRepository.findByEmail(user.getEmail());
 
         if (loggedInUser == null) {
             String errorMessage = String.format("User with email: %s not found", user.getEmail());
@@ -69,7 +69,7 @@ public class UserService {
 
         try {
             String username = jwtUtil.getUsernameFromToken(token.substring(7));
-            User user = userRepository.findByUsername(username);
+            Users user = userRepository.findByUsername(username);
             HttpHeaders responseHeaders = new HttpHeaders();
             String newToken = jwtUtil.getJWTToken(user.getUsername());
             responseHeaders.set("Authorization", newToken);
@@ -79,13 +79,13 @@ public class UserService {
         }
     }
 
-    public void save(User userToUpdate) {
+    public void save(Users userToUpdate) {
         userToUpdate.setStatus(StatusEnum.ONLINE);
         userRepository.save(userToUpdate);
     }
 
-    public void disconnect(User userToUpdate) {
-        User user = userRepository.findById(userToUpdate.getId()).orElse(null);
+    public void disconnect(Users userToUpdate) {
+        Users user = userRepository.findById(userToUpdate.getId()).orElse(null);
 
         if (user != null) {
             user.setStatus(StatusEnum.OFFLINE);
@@ -93,11 +93,11 @@ public class UserService {
         }
     }
 
-    public List<User> getAllUsers() {
+    public List<Users> getAllUsers() {
         return userRepository.findByStatus(StatusEnum.ONLINE);
     }
 
-    public User getUserById(UUID id) {
+    public Users getUserById(UUID id) {
         return userRepository.findById(id).orElse(null);
     }
 
@@ -106,7 +106,7 @@ public class UserService {
     }
 
     public PerfilDTO getPerfilById(UUID id) {
-        User user = userRepository.findById(id).orElse(null);
+        Users user = userRepository.findById(id).orElse(null);
 
         List<Skill> listaSkills = skillRepository.findAllByUserID(id);
 

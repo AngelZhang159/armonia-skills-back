@@ -17,10 +17,10 @@ public class DatabaseConnectionVerifier implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         try (Connection connection = dataSource.getConnection()) {
-            System.out.println("Successfully connected to MySQL Database!");
+            System.out.println("Successfully connected to H2 Database!");
 
         } catch (SQLException e) {
-            System.err.println("Error connecting to MySQL Database: " + e.getMessage());
+            System.err.println("Error connecting to H2 Database: " + e.getMessage());
         }
     }
 }

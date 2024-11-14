@@ -1,6 +1,6 @@
 package com.armoniacode.armoniaskills.util;
 
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -30,7 +30,7 @@ public class JWTUtil {
     }
 
     public String getJWTToken(String username) {
-        User user = userRepository.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
 
         if (user == null) {
             log.error("User not found");
@@ -76,7 +76,7 @@ public class JWTUtil {
     }
 
 
-    public Optional<User> getUserFromToken(String token) {
+    public Optional<Users> getUserFromToken(String token) {
         byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
         SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
 
@@ -101,7 +101,7 @@ public class JWTUtil {
         SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
 
         UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
-        User user = userRepository.findById(uuid).orElse(null);
+        Users user = userRepository.findById(uuid).orElse(null);
 
         if (user != null) {
             return user.getBalance();
@@ -115,7 +115,7 @@ public class JWTUtil {
         SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
 
         UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
-        User user = userRepository.findById(uuid).orElse(null);
+        Users user = userRepository.findById(uuid).orElse(null);
 
         if (user != null) {
             userRepository.save(user).setBalance(balance);
@@ -137,7 +137,7 @@ public class JWTUtil {
         SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
 
         UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
-        User user = userRepository.findById(uuid).orElse(null);
+        Users user = userRepository.findById(uuid).orElse(null);
 
         if (user != null) {
             user.setBalance(user.getBalance() + balance);
@@ -151,7 +151,7 @@ public class JWTUtil {
         SecretKey key = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
 
         UUID uuid = UUID.fromString(Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getId());
-        User user = userRepository.findById(uuid).orElse(null);
+        Users user = userRepository.findById(uuid).orElse(null);
 
         double balanceActual = user.getBalance();
 

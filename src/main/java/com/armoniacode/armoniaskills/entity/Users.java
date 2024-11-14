@@ -1,7 +1,5 @@
 package com.armoniacode.armoniaskills.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 @Entity
 @Data
 @RequiredArgsConstructor
-public class User implements UserDetails {
+public class Users implements UserDetails {
 
     @Id
     @GeneratedValue

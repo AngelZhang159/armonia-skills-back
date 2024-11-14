@@ -2,7 +2,7 @@ package com.armoniacode.armoniaskills.controller;
 
 import com.armoniacode.armoniaskills.dto.PerfilDTO;
 import com.armoniacode.armoniaskills.entity.Review;
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.service.UserService;
 import com.armoniacode.armoniaskills.util.JWTUtil;
 import org.slf4j.Logger;
@@ -33,11 +33,11 @@ public class UserController {
     }
 
     @GetMapping("/user/data")
-    public ResponseEntity<User> userData(@RequestHeader String Authorization) {
+    public ResponseEntity<Users> userData(@RequestHeader String Authorization) {
 
         String token = Authorization.substring(7);
 
-        Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<Users> user = jwtUtil.getUserFromToken(token);
 
         logger.info("User data: {}", user.toString());
 
@@ -50,17 +50,17 @@ public class UserController {
     }
 
     @PatchMapping("/user/updateUser")
-    public ResponseEntity<String> updateUser(@RequestHeader String Authorization, @RequestBody User user) {
+    public ResponseEntity<String> updateUser(@RequestHeader String Authorization, @RequestBody Users user) {
 
         String token = Authorization.substring(7);
 
-        Optional<User> userFromToken = jwtUtil.getUserFromToken(token);
+        Optional<Users> userFromToken = jwtUtil.getUserFromToken(token);
 
         if (userFromToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        User userToUpdate = userFromToken.get();
+        Users userToUpdate = userFromToken.get();
 
         if (user.getPassword() != null) {
             String password = user.getPassword();
@@ -91,14 +91,14 @@ public class UserController {
 
     @MessageMapping("/user.addUser")
     @SendTo("/user/topic")
-    public User addUser(@Payload User user) {
+    public Users addUser(@Payload Users user) {
         userService.save(user);
         return user;
     }
 
     @MessageMapping("/user.disconnectUser")
     @SendTo("/user/topic")
-    public User disconnectUser(@Payload User user) {
+    public Users disconnectUser(@Payload Users user) {
         userService.disconnect(user);
         return user;
     }
@@ -108,7 +108,7 @@ public class UserController {
 
         String token = Authorization.substring(7);
 
-        Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<Users> user = jwtUtil.getUserFromToken(token);
 
         if (user.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -122,17 +122,17 @@ public class UserController {
 
         String token = Authorization.substring(7);
 
-        Optional<User> userFromToken = jwtUtil.getUserFromToken(token);
+        Optional<Users> userFromToken = jwtUtil.getUserFromToken(token);
 
         if (userFromToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        User userToUpdate = getUserById(review.getSellerId());
+        Users userToUpdate = getUserById(review.getSellerId());
 
         logger.info(review.toString());
 
-        User userBuyer = userFromToken.get();
+        Users userBuyer = userFromToken.get();
         review.setBuyerId(userBuyer.getId());
         review.setImageUrl(userBuyer.getImageURL());
         review.setUsername(userBuyer.getUsername());
@@ -151,7 +151,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public User getUserById(@RequestParam UUID id) {
+    public Users getUserById(@RequestParam UUID id) {
         //DEVUELVE USUARIO ENTERO, QUITAR LUEGO COSAS QUE NO DEBERIAN ESTAR
         return userService.getUserById(id);
     }
@@ -161,7 +161,7 @@ public class UserController {
 
         String token = Authorization.substring(7);
 
-        Optional<User> user = jwtUtil.getUserFromToken(token);
+        Optional<Users> user = jwtUtil.getUserFromToken(token);
 
         if (user.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -180,13 +180,13 @@ public class UserController {
 
         String token = Authorization.substring(7);
 
-        Optional<User> userFromToken = jwtUtil.getUserFromToken(token);
+        Optional<Users> userFromToken = jwtUtil.getUserFromToken(token);
 
         if (userFromToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        User userToUpdate = userFromToken.get();
+        Users userToUpdate = userFromToken.get();
         userToUpdate.setFcmToken(fcmToken.replace("\"", ""));
 
         userService.save(userToUpdate);

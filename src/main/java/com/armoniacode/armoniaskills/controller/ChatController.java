@@ -5,7 +5,7 @@ import com.armoniacode.armoniaskills.dto.MessageDTO;
 import com.armoniacode.armoniaskills.entity.ChatMessage;
 import com.armoniacode.armoniaskills.entity.ChatRoom;
 import com.armoniacode.armoniaskills.entity.Skill;
-import com.armoniacode.armoniaskills.entity.User;
+import com.armoniacode.armoniaskills.entity.Users;
 import com.armoniacode.armoniaskills.service.ChatMessageService;
 import com.armoniacode.armoniaskills.service.ChatRoomService;
 import com.armoniacode.armoniaskills.service.SkillService;
@@ -64,7 +64,7 @@ public class ChatController {
         ArrayList<ChatDTO> chatDTOs = new ArrayList<>();
 
         for (ChatRoom chatRoom : chatRooms) {
-            User user;
+            Users user;
             if (chatRoom.getSenderId().equals(id)) {
                 user = userService.getUserById(chatRoom.getReceiverId());
             } else {
